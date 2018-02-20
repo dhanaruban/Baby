@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Baby Casket</string>
+    <string name="monitor">Monitor</string>
+    <string name="demonitor">Demonitor</string>
+    <string name="title_activity_main">Baby Casket</string>
+
+    <string name="action_settings">Customize</string>
+    <string name="action_harmful">Harmful Object Profile</string>
+    <string name="action_about">About Us</string>
+    <string name="action_logout">Log out</string>
+    <string name="title_activity_custom">CustomActivity</string>
+
+</resources>
