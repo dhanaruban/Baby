@@ -43,6 +43,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".CustomActivity" />
         </activity>
+        <provider
+            android:name="com.dhanaruban.babycasket.data.TaskContentProvider"
+            android:authorities="com.dhanaruban.babycasket"
+            android:exported="false"/>
     </application>
 
 </manifest>

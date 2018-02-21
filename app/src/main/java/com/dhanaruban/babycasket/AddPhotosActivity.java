@@ -7,11 +7,15 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.dhanaruban.babycasket.data.TaskContract;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -22,6 +26,7 @@ public class AddPhotosActivity extends AppCompatActivity {
     Intent imageSelection;
     private Uri filePath;
     private Bitmap bitmap;
+    private static final String TAG = AddPhotosActivity.class.getSimpleName();
 
     TextView relation;
     ImageButton addPhoto;
@@ -49,6 +54,13 @@ public class AddPhotosActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
+                ContentValues contentValues = new ContentValues();
+                // Put the task description and selected mPriority into the ContentValues
+                contentValues.put(TaskContract.TaskEntry.COLUMN_RELATIONSHIP, relation.getText().toString());
+                contentValues.put(TaskContract.TaskEntry.COLUMN_IMAGE, filePath.getEncodedPath());
+                // Insert the content values via a ContentResolver
+                Uri uri = getContentResolver().insert(TaskContract.TaskEntry.CONTENT_URI, contentValues);
+
 
                 Intent data = new Intent();
                 data.putExtra("relationShip", relation.getText().toString());
@@ -65,6 +77,7 @@ public class AddPhotosActivity extends AppCompatActivity {
 
         if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && data != null && data.getData() != null) {
             filePath = data.getData();
+            Log.i(TAG,filePath.toString());
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
                 addPhoto.setImageBitmap(bitmap);
