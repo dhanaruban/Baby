@@ -65,18 +65,18 @@ public class MainActivity extends AppCompatActivity {
 
             return true;
         } else if (id == R.id.action_about) {
-//            Intent intent = new Intent(getApplicationContext(), AboutActivity.class);
-//            startActivity(intent);
+            Intent intent = new Intent(getApplicationContext(), AboutActivity.class);
+            startActivity(intent);
 
             return true;
         } else if (id == R.id.action_logout) {
-//            Intent loginscreen = new Intent(this, LoginActivity.class);
-//            loginscreen.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//            startActivity(loginscreen);
+           Intent loginscreen = new Intent(this, AuthenticatorActivity.class);
+            loginscreen.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(loginscreen);
             this.finish();
         } else if (id == R.id.action_harmful) {
-//            Intent intent = new Intent(getApplicationContext(), HarmfulObject.class);
-//            startActivity(intent);
+            Intent intent = new Intent(getApplicationContext(), Harmful.class);
+            startActivity(intent);
        }
 
         return super.onOptionsItemSelected(item);

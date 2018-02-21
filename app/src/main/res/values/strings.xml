@@ -9,5 +9,7 @@
     <string name="action_about">About Us</string>
     <string name="action_logout">Log out</string>
     <string name="title_activity_custom">CustomActivity</string>
+    <string name="title_activity_harmful">Harmful</string>
+    <string name="title_activity_about">About Us</string>
 
 </resources>

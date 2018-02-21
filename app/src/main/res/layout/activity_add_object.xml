@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.dhanaruban.babycasket.AddPhotosActivity"
+    tools:context="com.dhanaruban.babycasket.AddObjectActivity"
     android:orientation="vertical">
 
     <android.support.design.widget.AppBarLayout
@@ -15,12 +15,12 @@
     </android.support.design.widget.AppBarLayout>
 
     <EditText
-        android:id="@+id/et_relationship"
+        android:id="@+id/et_object"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textPersonName"
-        android:hint="Person Relationship"
+        android:hint="Add object name"
         android:gravity="start"
         android:paddingBottom="16dp"
         android:paddingEnd="64dp"
@@ -30,7 +30,7 @@
         android:paddingTop="16dp"/>
 
     <ImageButton
-        android:id="@+id/ib_addPhoto"
+        android:id="@+id/ib_addObject"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="160dp"
@@ -39,7 +39,7 @@
         android:layout_gravity="center" />
 
     <Button
-        android:id="@+id/b_addAction"
+        android:id="@+id/b_addobject"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="ADD"

@@ -36,6 +36,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
+        <activity
+            android:name=".Harmful"
+            android:label="@string/title_activity_harmful">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
 
         <activity android:name=".AddPhotosActivity"
             android:label="@string/title_activity_custom">
@@ -43,9 +50,26 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".CustomActivity" />
         </activity>
+        <activity android:name=".AddObjectActivity"
+            android:label="@string/title_activity_harmful">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Harmful" />
+        </activity>
+        <activity
+            android:name=".AboutActivity"
+            android:label="@string/title_activity_about">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
         <provider
             android:name="com.dhanaruban.babycasket.data.TaskContentProvider"
             android:authorities="com.dhanaruban.babycasket"
+            android:exported="false"/>
+        <provider
+            android:name="com.dhanaruban.babycasket.data.ObjectContentProvider"
+            android:authorities="com.dhanaruban.babycasket.AddObjectActivity"
             android:exported="false"/>
     </application>
 
