@@ -77,7 +77,14 @@ public class MainActivity extends AppCompatActivity {
         } else if (id == R.id.action_harmful) {
             Intent intent = new Intent(getApplicationContext(), Harmful.class);
             startActivity(intent);
-       }
+       }else if (id == R.id.action_baby) {
+            Intent intent = new Intent(getApplicationContext(), BabyActivity.class);
+            startActivity(intent);
+        }
+        else if (id == R.id.action_camera) {
+            Intent intent = new Intent(getApplicationContext(), MyCamera.class);
+            startActivity(intent);
+        }
 
         return super.onOptionsItemSelected(item);
     }

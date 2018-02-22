@@ -33,10 +33,10 @@
         android:id="@+id/ib_addPhoto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:minHeight="160dp"
         android:minWidth="160dp"
-        app:srcCompat="@android:drawable/ic_menu_gallery"
-        android:layout_gravity="center" />
+        app:srcCompat="@drawable/addperson" />
 
     <Button
         android:id="@+id/b_addAction"

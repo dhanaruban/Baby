@@ -11,5 +11,6 @@
     <string name="title_activity_custom">CustomActivity</string>
     <string name="title_activity_harmful">Harmful</string>
     <string name="title_activity_about">About Us</string>
+    <string name="title_activity_baby">Baby Profile</string>
 
 </resources>

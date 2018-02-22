@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    tools:context="com.dhanaruban.babycasket.AddObjectActivity">
+    tools:context="com.dhanaruban.babycasket.BabyActivity">
     <LinearLayout android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -13,7 +13,7 @@
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingBottom="8dp">
         <ImageView
-            android:id="@+id/objectView"
+            android:id="@+id/babyView"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:minHeight="50dp"
@@ -27,7 +27,7 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
         <TextView
-            android:id="@+id/objectName"
+            android:id="@+id/baby"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@android:color/primary_text_light"

@@ -18,9 +18,17 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.amazonaws.mobile.client.AWSMobileClient;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
+import com.amazonaws.services.s3.AmazonS3Client;
 import com.dhanaruban.babycasket.data.TaskContract;
 import com.dhanaruban.babycasket.utility.CircleTransform;
 import com.squareup.picasso.Picasso;
+
+import java.io.File;
 
 
 public class CustomAdapter  extends RecyclerView.Adapter<CustomAdapter.TaskViewHolder>{
@@ -53,7 +61,7 @@ public class CustomAdapter  extends RecyclerView.Adapter<CustomAdapter.TaskViewH
         // Determine the values of the wanted data
         final int id = mCursor.getInt(idIndex);
         String description = mCursor.getString(descriptionIndex);
-        String url =  "content://media" + mCursor.getString(image);
+        String url =  mCursor.getString(image); //"content://media" + mCursor.getString(image);
 
         Log.i(TAG,url);
 
@@ -63,6 +71,7 @@ public class CustomAdapter  extends RecyclerView.Adapter<CustomAdapter.TaskViewH
         holder.relationshipView.setText(description);
         Picasso.with(mContext).load(url).transform(new CircleTransform())
                 .into(holder.imageView);
+        uploadData(url);
 
 
         // Programmatically set the text and color for the priority TextView
@@ -89,6 +98,56 @@ public class CustomAdapter  extends RecyclerView.Adapter<CustomAdapter.TaskViewH
             this.notifyDataSetChanged();
         }
         return temp;
+    }
+
+    public void uploadData(String filename) {
+
+        // Initialize AWSMobileClient if not initialized upon the app startup.
+        AWSMobileClient.getInstance().initialize(mContext).execute();
+
+        TransferUtility transferUtility =
+                TransferUtility.builder()
+                        .context(mContext)
+                        .awsConfiguration(AWSMobileClient.getInstance().getConfiguration())
+                        .s3Client(new AmazonS3Client(AWSMobileClient.getInstance().getCredentialsProvider()))
+                        .build();
+        File file = new File(filename);
+        TransferObserver uploadObserver =
+                transferUtility.upload("temp/"+file.getName(), file);
+
+        uploadObserver.setTransferListener(new TransferListener() {
+
+            @Override
+            public void onStateChanged(int id, TransferState state) {
+                if (TransferState.COMPLETED == state) {
+                    Log.d(TAG,"upload successfully local");
+                    // Handle a completed upload.
+                }
+            }
+
+            @Override
+            public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
+                float percentDonef = ((float)bytesCurrent/(float)bytesTotal) * 100;
+                int percentDone = (int)percentDonef;
+
+                Log.d(TAG, "   ID:" + id + "   bytesCurrent: " + bytesCurrent + "   bytesTotal: " + bytesTotal + " " + percentDone + "%");
+            }
+
+            @Override
+            public void onError(int id, Exception ex) {
+                Log.d(TAG,"upload fail local" + id);
+                ex.printStackTrace();
+                // Handle errors
+            }
+
+        });
+
+        // If your upload does not trigger the onStateChanged method inside your
+        // TransferListener, you can directly check the transfer state as shown here.
+        if (TransferState.COMPLETED == uploadObserver.getState()) {
+            Log.d(TAG,"upload successfully");
+            // Handle a completed upload.
+        }
     }
     class TaskViewHolder extends RecyclerView.ViewHolder {
 

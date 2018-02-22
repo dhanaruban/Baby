@@ -18,17 +18,17 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.dhanaruban.babycasket.data.ObjectContract;
+import com.dhanaruban.babycasket.data.BabyContract;
 import com.dhanaruban.babycasket.utility.CircleTransform;
 import com.squareup.picasso.Picasso;
 
 
-public class HarmfulAdapter  extends RecyclerView.Adapter<HarmfulAdapter.TaskViewHolder>{
+public class BabyAdapter  extends RecyclerView.Adapter<BabyAdapter.TaskViewHolder>{
     private Cursor mCursor;
     private Context mContext;
-    private static String TAG = Harmful.class.getName();
+    private static String TAG = BabyActivity.class.getName();
 
-    public HarmfulAdapter(Context mContext) {
+    public BabyAdapter(Context mContext) {
         this.mContext = mContext;
     }
     @Override
@@ -36,7 +36,7 @@ public class HarmfulAdapter  extends RecyclerView.Adapter<HarmfulAdapter.TaskVie
 
         // Inflate the task_layout to a view
         View view = LayoutInflater.from(mContext)
-                .inflate(R.layout.object_layout, parent, false);
+                .inflate(R.layout.baby_layout, parent, false);
 
         return new TaskViewHolder(view);
     }
@@ -44,9 +44,9 @@ public class HarmfulAdapter  extends RecyclerView.Adapter<HarmfulAdapter.TaskVie
     public void onBindViewHolder(TaskViewHolder holder, int position) {
 
         // Indices for the _id, description, and priority columns
-        int idIndex = mCursor.getColumnIndex(ObjectContract.TaskEntry._ID);
-        int descriptionIndex = mCursor.getColumnIndex(ObjectContract.TaskEntry.COLUMN_OBJECT_NAME);
-        int image = mCursor.getColumnIndex(ObjectContract.TaskEntry.COLUMN_OBJECT_IMAGE);
+        int idIndex = mCursor.getColumnIndex(BabyContract.TaskEntry._ID);
+        int descriptionIndex = mCursor.getColumnIndex(BabyContract.TaskEntry.COLUMN_NAME);
+        int image = mCursor.getColumnIndex(BabyContract.TaskEntry.COLUMN__BABY_IMAGE);
 
         mCursor.moveToPosition(position); // get to the right location in the cursor
 
@@ -60,9 +60,9 @@ public class HarmfulAdapter  extends RecyclerView.Adapter<HarmfulAdapter.TaskVie
 
         //Set values
         holder.itemView.setTag(id);
-        holder.objectname.setText(description);
+        holder.babyname.setText(description);
         Picasso.with(mContext).load(url).transform(new CircleTransform()).fit()
-                .into(holder.objectimageView);
+                .into(holder.babyimageView);
 
 
         // Programmatically set the text and color for the priority TextView
@@ -93,8 +93,8 @@ public class HarmfulAdapter  extends RecyclerView.Adapter<HarmfulAdapter.TaskVie
     class TaskViewHolder extends RecyclerView.ViewHolder {
 
         // Class variables for the task description and priority TextViews
-        TextView objectname;
-        ImageView objectimageView;
+        TextView babyname;
+        ImageView babyimageView;
 
         /**
          * Constructor for the TaskViewHolders.
@@ -104,8 +104,8 @@ public class HarmfulAdapter  extends RecyclerView.Adapter<HarmfulAdapter.TaskVie
         public TaskViewHolder(View itemView) {
             super(itemView);
 
-            objectname = (TextView) itemView.findViewById(R.id.objectName);
-            objectimageView = (ImageView) itemView.findViewById(R.id.objectView);
+            babyname = (TextView) itemView.findViewById(R.id.baby);
+            babyimageView = (ImageView) itemView.findViewById(R.id.babyView);
         }
     }
 }

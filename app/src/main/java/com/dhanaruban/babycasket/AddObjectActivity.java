@@ -79,13 +79,11 @@ public class AddObjectActivity extends AppCompatActivity {
         if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && data != null && data.getData() != null) {
             filePath = data.getData();
             Log.i(TAG,filePath.toString());
-            try {
-                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
-                addPhoto.setImageBitmap(bitmap);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            Picasso
+                    .with(this)
+                    .load(filePath)
+                    .fit() // resizes the image to these dimensions (in pixel). does not respect aspect ratio
+                    .into(addPhoto);
         }
     }
 

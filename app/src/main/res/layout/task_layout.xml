@@ -14,8 +14,10 @@
         android:paddingBottom="8dp">
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="22dp"
             android:layout_height="22dp"
+            android:layout_width="22dp"
+            android:minHeight="50dp"
+            android:minWidth="50dp"
             android:layout_gravity="center"
             android:gravity="center"
             android:contentDescription="@string/app_name"
