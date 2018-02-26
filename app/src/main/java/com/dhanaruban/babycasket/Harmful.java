@@ -16,39 +16,30 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.View;
 
-import com.amazonaws.mobile.client.AWSMobileClient;
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.dhanaruban.babycasket.data.TaskContract;
+import com.dhanaruban.babycasket.data.ObjectContract;
 
-import java.io.File;
-
-public class CustomActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
+public class Harmful extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
     private static int RESULT_ADD_IMAGE = 2;
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int TASK_LOADER_ID = 0;
 
     // Member variables for the adapter and RecyclerView
-    private CustomAdapter mAdapter;
+    private HarmfulAdapter mAdapter;
     RecyclerView mRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_custom);
-        AWSMobileClient.getInstance().initialize(this).execute();
-        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewTasks);
+        setContentView(R.layout.activity_harmful);
+        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewTasks1);
 
         // Set the layout for the RecyclerView to be a linear layout, which measures and
         // positions items within a RecyclerView into a linear list
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // Initialize the adapter and attach it to the RecyclerView
-        mAdapter = new CustomAdapter(this);
+        mAdapter = new HarmfulAdapter(this);
         mRecyclerView.setAdapter(mAdapter);
 
         /*
@@ -74,14 +65,14 @@ public class CustomActivity extends AppCompatActivity implements LoaderManager.L
 
                 // Build appropriate uri with String row id appended
                 String stringId = Integer.toString(id);
-                Uri uri = TaskContract.TaskEntry.CONTENT_URI;
+                Uri uri = ObjectContract.TaskEntry.CONTENT_URI;
                 uri = uri.buildUpon().appendPath(stringId).build();
 
                 // COMPLETED (2) Delete a single row of data using a ContentResolver
                 getContentResolver().delete(uri, null, null);
 
                 // COMPLETED (3) Restart the loader to re-query for all tasks after a deletion
-                getSupportLoaderManager().restartLoader(TASK_LOADER_ID, null, CustomActivity.this);
+                getSupportLoaderManager().restartLoader(TASK_LOADER_ID, null, Harmful.this);
 
             }
         }).attachToRecyclerView(mRecyclerView);
@@ -91,7 +82,7 @@ public class CustomActivity extends AppCompatActivity implements LoaderManager.L
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent addPhoto = new Intent(getApplicationContext(),AddPhotosActivity.class);
+                Intent addPhoto = new Intent(getApplicationContext(),AddObjectActivity.class);
                 startActivity(addPhoto);
             }
         });
@@ -134,11 +125,11 @@ public class CustomActivity extends AppCompatActivity implements LoaderManager.L
                 // [Hint] use a try/catch block to catch any errors in loading data
 
                 try {
-                    return getContentResolver().query(TaskContract.TaskEntry.CONTENT_URI,
+                    return getContentResolver().query(ObjectContract.TaskEntry.CONTENT_URI,
                             null,
                             null,
                             null,
-                            TaskContract.TaskEntry.COLUMN_IMAGE);
+                            ObjectContract.TaskEntry.COLUMN_OBJECT_IMAGE);
 
                 } catch (Exception e) {
                     Log.e(TAG, "Failed to asynchronously load data.");
@@ -170,9 +161,6 @@ public class CustomActivity extends AppCompatActivity implements LoaderManager.L
         mAdapter.swapCursor(null);
 
     }
-
-
-
 //    @Override
 //    public Loader<Cursor> onCreateLoader(int id, final Bundle loaderArgs) {
 //

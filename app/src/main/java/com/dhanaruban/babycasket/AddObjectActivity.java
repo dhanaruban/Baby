@@ -15,33 +15,31 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dhanaruban.babycasket.data.ObjectContract;
 import com.dhanaruban.babycasket.data.TaskContract;
-import com.dhanaruban.babycasket.utility.CircleTransform;
-import com.dhanaruban.babycasket.utility.Util;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 
-public class AddPhotosActivity extends AppCompatActivity {
+public class AddObjectActivity extends AppCompatActivity {
 
     private static int RESULT_LOAD_IMAGE = 1;
     Intent imageSelection;
-    private String filePath;
+    private Uri filePath;
     private Bitmap bitmap;
-    private static final String TAG = AddPhotosActivity.class.getSimpleName();
+    private static final String TAG = AddObjectActivity.class.getSimpleName();
 
-    TextView relation;
+    TextView object;
     ImageButton addPhoto;
     Button addButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_photos);
+        setContentView(R.layout.activity_add_object);
 
-        relation = (TextView) findViewById(R.id.et_relationship);
-        addPhoto = (ImageButton) findViewById(R.id.ib_addPhoto);
-        addButton = (Button) findViewById(R.id.b_addAction);
+        object = (TextView) findViewById(R.id.et_object);
+        addPhoto = (ImageButton) findViewById(R.id.ib_addObject);
+        addButton = (Button) findViewById(R.id.b_addobject);
 
         addPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,15 +57,14 @@ public class AddPhotosActivity extends AppCompatActivity {
             public void onClick(View view) {
                 ContentValues contentValues = new ContentValues();
                 // Put the task description and selected mPriority into the ContentValues
-                contentValues.put(TaskContract.TaskEntry.COLUMN_RELATIONSHIP, relation.getText().toString());
-
-                contentValues.put(TaskContract.TaskEntry.COLUMN_IMAGE, filePath);
+                contentValues.put(ObjectContract.TaskEntry.COLUMN_OBJECT_NAME, object.getText().toString());
+                contentValues.put(ObjectContract.TaskEntry.COLUMN_OBJECT_IMAGE, filePath.getEncodedPath());
                 // Insert the content values via a ContentResolver
-                Uri uri = getContentResolver().insert(TaskContract.TaskEntry.CONTENT_URI, contentValues);
+                Uri uri = getContentResolver().insert(ObjectContract.TaskEntry.CONTENT_URI, contentValues);
 
 
                 Intent data = new Intent();
-                data.putExtra("relationShip", relation.getText().toString());
+                data.putExtra("relationShip", object.getText().toString());
                 data.putExtra("filePath", filePath);
                 setResult(RESULT_OK, data);
                 finish();
@@ -80,16 +77,13 @@ public class AddPhotosActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            //filePath = data.getData();
-
-            try {
-                filePath = Util.getPath(this, getContentResolver(), data.getData());
-                Picasso.with(this).load(filePath).into(addPhoto);
-                Log.i(TAG,filePath);
-
-            }  catch (URISyntaxException e) {
-                e.printStackTrace();
-            }
+            filePath = data.getData();
+            Log.i(TAG,filePath.toString());
+            Picasso
+                    .with(this)
+                    .load(filePath)
+                    .fit() // resizes the image to these dimensions (in pixel). does not respect aspect ratio
+                    .into(addPhoto);
         }
     }
 

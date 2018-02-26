@@ -20,6 +20,17 @@
       "Region": "us-east-1"
     }
   },
+  "S3TransferUtility": {
+    "Default": {
+      "Bucket": "babycasketprod-userfiles-mobilehub-399668420",
+      "Region": "us-east-1"
+    }
+  },
+  "Cognito": {
+    "Default": {
+      "Region": "us-east-1"
+    }
+  },
   "PinpointAnalytics": {
     "Default": {
       "AppId": "9a6761735f3943c2b2db183448a9377d",
@@ -28,6 +39,12 @@
   },
   "PinpointTargeting": {
     "Default": {
+      "Region": "us-east-1"
+    }
+  },
+  "UserFileManager": {
+    "Default": {
+      "Bucket": "babycasketprod-userfiles-mobilehub-399668420",
       "Region": "us-east-1"
     }
   },

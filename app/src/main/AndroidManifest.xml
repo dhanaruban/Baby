@@ -4,6 +4,10 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.hardware.camera"  android:required="false"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+
 
     <application
         android:allowBackup="true"
@@ -12,6 +16,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <service android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService" android:enabled="true" />
 
         <activity android:name=".AuthenticatorActivity">
             <intent-filter>
@@ -36,6 +41,20 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
+        <activity
+            android:name=".Harmful"
+            android:label="@string/title_activity_harmful">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity
+            android:name=".BabyActivity"
+            android:label="@string/title_activity_baby">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
 
         <activity android:name=".AddPhotosActivity"
             android:label="@string/title_activity_custom">
@@ -43,6 +62,41 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".CustomActivity" />
         </activity>
+        <activity android:name=".AddObjectActivity"
+            android:label="@string/title_activity_harmful">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Harmful" />
+        </activity>
+        <activity android:name=".AddBabyActivity"
+            android:label="@string/title_activity_baby">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".BabyActivity" />
+        </activity>
+        <activity
+            android:name=".AboutActivity"
+            android:label="@string/title_activity_about">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity
+            android:name=".MyCamera"
+            android:label="camera">
+        </activity>
+        <provider
+            android:name="com.dhanaruban.babycasket.data.TaskContentProvider"
+            android:authorities="com.dhanaruban.babycasket"
+            android:exported="false"/>
+        <provider
+            android:name="com.dhanaruban.babycasket.data.ObjectContentProvider"
+            android:authorities="com.dhanaruban.babycasket.AddObjectActivity"
+            android:exported="false"/>
+        <provider
+            android:name="com.dhanaruban.babycasket.data.BabyContentProvider"
+            android:authorities="com.dhanaruban.babycasket.AddBabyActivity"
+            android:exported="false"/>
     </application>
 
 </manifest>

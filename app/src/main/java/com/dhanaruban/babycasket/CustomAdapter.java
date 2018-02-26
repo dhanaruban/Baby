@@ -1,0 +1,172 @@
+package com.dhanaruban.babycasket;
+
+/**
+ * Created by thenu on 21-02-2018.
+ */
+import android.content.Context;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.drawable.GradientDrawable;
+import android.net.Uri;
+import android.provider.MediaStore;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.amazonaws.mobile.client.AWSMobileClient;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.dhanaruban.babycasket.data.TaskContract;
+import com.dhanaruban.babycasket.utility.CircleTransform;
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
+
+
+public class CustomAdapter  extends RecyclerView.Adapter<CustomAdapter.TaskViewHolder>{
+    private Cursor mCursor;
+    private Context mContext;
+    private static String TAG = CustomActivity.class.getName();
+
+    public CustomAdapter(Context mContext) {
+        this.mContext = mContext;
+    }
+    @Override
+    public TaskViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+        // Inflate the task_layout to a view
+        View view = LayoutInflater.from(mContext)
+                .inflate(R.layout.task_layout, parent, false);
+
+        return new TaskViewHolder(view);
+    }
+    @Override
+    public void onBindViewHolder(TaskViewHolder holder, int position) {
+
+        // Indices for the _id, description, and priority columns
+        int idIndex = mCursor.getColumnIndex(TaskContract.TaskEntry._ID);
+        int descriptionIndex = mCursor.getColumnIndex(TaskContract.TaskEntry.COLUMN_RELATIONSHIP);
+        int image = mCursor.getColumnIndex(TaskContract.TaskEntry.COLUMN_IMAGE);
+
+        mCursor.moveToPosition(position); // get to the right location in the cursor
+
+        // Determine the values of the wanted data
+        final int id = mCursor.getInt(idIndex);
+        String description = mCursor.getString(descriptionIndex);
+        String url =  mCursor.getString(image); //"content://media" + mCursor.getString(image);
+
+        Log.i(TAG,url);
+
+
+        //Set values
+        holder.itemView.setTag(id);
+        holder.relationshipView.setText(description);
+        Picasso.with(mContext).load(url).transform(new CircleTransform())
+                .into(holder.imageView);
+        uploadData(url);
+
+
+        // Programmatically set the text and color for the priority TextView
+
+
+    }
+    @Override
+    public int getItemCount() {
+        if (mCursor == null) {
+            return 0;
+        }
+        return mCursor.getCount();
+    }
+    public Cursor swapCursor(Cursor c) {
+        // check if this cursor is the same as the previous cursor (mCursor)
+        if (mCursor == c) {
+            return null; // bc nothing has changed
+        }
+        Cursor temp = mCursor;
+        this.mCursor = c; // new cursor value assigned
+
+        //check if this is a valid cursor, then update the cursor
+        if (c != null) {
+            this.notifyDataSetChanged();
+        }
+        return temp;
+    }
+
+    public void uploadData(String filename) {
+
+        // Initialize AWSMobileClient if not initialized upon the app startup.
+        AWSMobileClient.getInstance().initialize(mContext).execute();
+
+        TransferUtility transferUtility =
+                TransferUtility.builder()
+                        .context(mContext)
+                        .awsConfiguration(AWSMobileClient.getInstance().getConfiguration())
+                        .s3Client(new AmazonS3Client(AWSMobileClient.getInstance().getCredentialsProvider()))
+                        .build();
+        File file = new File(filename);
+        TransferObserver uploadObserver =
+                transferUtility.upload("temp/"+file.getName(), file);
+
+        uploadObserver.setTransferListener(new TransferListener() {
+
+            @Override
+            public void onStateChanged(int id, TransferState state) {
+                if (TransferState.COMPLETED == state) {
+                    Log.d(TAG,"upload successfully local");
+                    // Handle a completed upload.
+                }
+            }
+
+            @Override
+            public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
+                float percentDonef = ((float)bytesCurrent/(float)bytesTotal) * 100;
+                int percentDone = (int)percentDonef;
+
+                Log.d(TAG, "   ID:" + id + "   bytesCurrent: " + bytesCurrent + "   bytesTotal: " + bytesTotal + " " + percentDone + "%");
+            }
+
+            @Override
+            public void onError(int id, Exception ex) {
+                Log.d(TAG,"upload fail local" + id);
+                ex.printStackTrace();
+                // Handle errors
+            }
+
+        });
+
+        // If your upload does not trigger the onStateChanged method inside your
+        // TransferListener, you can directly check the transfer state as shown here.
+        if (TransferState.COMPLETED == uploadObserver.getState()) {
+            Log.d(TAG,"upload successfully");
+            // Handle a completed upload.
+        }
+    }
+    class TaskViewHolder extends RecyclerView.ViewHolder {
+
+        // Class variables for the task description and priority TextViews
+        TextView relationshipView;
+        ImageView imageView;
+
+        /**
+         * Constructor for the TaskViewHolders.
+         *
+         * @param itemView The view inflated in onCreateViewHolder
+         */
+        public TaskViewHolder(View itemView) {
+            super(itemView);
+
+            relationshipView = (TextView) itemView.findViewById(R.id.relationship);
+            imageView = (ImageView) itemView.findViewById(R.id.imageView);
+        }
+    }
+}
+
+
