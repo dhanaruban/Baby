@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
         else if (id == R.id.action_camera) {
-            Intent intent = new Intent(getApplicationContext(), MyCamera.class);
+            Intent intent = new Intent(getApplicationContext(), CameraActivity.class);
             startActivity(intent);
         }
 

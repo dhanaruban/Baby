@@ -3,6 +3,8 @@
 /local.properties
 /.idea/workspace.xml
 /.idea/libraries
+/.idea/
+/app/src/main/res/raw/awsconfiguration.json
 .DS_Store
 /build
 /captures
