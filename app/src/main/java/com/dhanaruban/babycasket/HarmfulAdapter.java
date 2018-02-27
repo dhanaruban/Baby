@@ -61,7 +61,7 @@ public class HarmfulAdapter  extends RecyclerView.Adapter<HarmfulAdapter.TaskVie
         //Set values
         holder.itemView.setTag(id);
         holder.objectname.setText(description);
-        Picasso.with(mContext).load(url).transform(new CircleTransform()).fit()
+        Picasso.with(mContext).load(url).transform(new CircleTransform())
                 .into(holder.objectimageView);
 
 

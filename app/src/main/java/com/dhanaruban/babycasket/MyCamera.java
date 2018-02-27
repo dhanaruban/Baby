@@ -1,16 +1,14 @@
 package com.dhanaruban.babycasket;
 
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Environment;
 import android.app.Activity;
 import android.hardware.Camera;
@@ -39,16 +37,20 @@ public class MyCamera extends Activity {
             @Override
             public void onClick(View v) {
                 mCamera.takePicture(null, null, mPicture);
-                Timer timer = new Timer();
-                timer.schedule(new TimerTask()
-                {
+                new CountDownTimer(5000,1000){
+
                     @Override
-                    public void run()
-                    {
+                    public void onFinish() {
+
+                    }
+
+                    @Override
+                    public void onTick(long millisUntilFinished) {
                         mCamera.startPreview();
                         mCamera.takePicture(null, null, mPicture);
                     }
-                }, 0, 1000);
+
+                }.start();
             }
         });
     }
