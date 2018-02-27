@@ -2,19 +2,67 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_gravity="center"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.dhanaruban.babycasket.MainActivity"
-    tools:showIn="@layout/activity_main">
+    tools:showIn="@layout/activity_main"
+    android:background="@drawable/backgroundnew">
 
-    <ToggleButton
-        android:id="@+id/toggleButton"
+    <ImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/profile_image"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        android:background="@drawable/image"/>
+
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Welcome to"
+        android:padding="0dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textColor="@color/white"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:fontFamily="cursive"
+        android:text="       BABY CASKET    "
+        android:textAlignment="center"
+        android:padding="20dp"
+        android:textColor="@color/white"
+        android:textSize="25dp" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Before you get into this,Customize all your"
+        android:textColor="@color/white"
+        android:textSize="18sp" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="profile details"
+        android:paddingBottom="50dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textColor="@color/white"
+        />
+    <ToggleButton
+        android:id="@+id/toggleButton"
+        android:background="@color/black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="45dp"
         android:layout_gravity="center_vertical|center_horizontal"
-        android:text="ToggleButton"
+        android:gravity="left|center"
+        android:textColor="@color/white"
         android:textOff="@string/demonitor"
-        android:textOn="@string/monitor"/>
+        android:textOn="@string/monitor"
+        android:visibility="visible" />
 </LinearLayout>

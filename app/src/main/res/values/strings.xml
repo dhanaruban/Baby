@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Baby Casket</string>
-    <string name="monitor">Monitor</string>
-    <string name="demonitor">Demonitor</string>
+    <string name="monitor">    Monitor</string>
+    <string name="demonitor">    Demonitor</string>
     <string name="title_activity_main">Baby Casket</string>
 
     <string name="action_settings">Customize</string>
