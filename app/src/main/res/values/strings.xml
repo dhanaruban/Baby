@@ -12,5 +12,9 @@
     <string name="title_activity_harmful">Harmful</string>
     <string name="title_activity_about">About Us</string>
     <string name="title_activity_baby">Baby Profile</string>
+    <string name="request_permission">Request Permission</string>
+    <string name="camera_error">Camera Error</string>
+    <string name="description_info">Description Info</string>
+    <string name="picture">Picture</string>
 
 </resources>

@@ -158,7 +158,7 @@ public class CustomAdapter  extends RecyclerView.Adapter<CustomAdapter.TaskViewH
 //        InputStream is=file.getInputStream();
 //        s3client.putObject(new PutObjectRequest(bucketName, keyName,is,new ObjectMetadata()));
         TransferObserver uploadObserver =
-                transferUtility.upload("temp/"+file.getName(), file);
+                transferUtility.upload(file.getName(), file);
 
         uploadObserver.setTransferListener(new TransferListener() {
 
