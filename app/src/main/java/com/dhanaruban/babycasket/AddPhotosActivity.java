@@ -62,6 +62,7 @@ public class AddPhotosActivity extends AppCompatActivity {
                 contentValues.put(TaskContract.TaskEntry.COLUMN_RELATIONSHIP, relation.getText().toString());
 
                 contentValues.put(TaskContract.TaskEntry.COLUMN_IMAGE, filePath);
+                contentValues.put(TaskContract.TaskEntry.UPLOAD_STATUS,"false");
                 // Insert the content values via a ContentResolver
                 Uri uri = getContentResolver().insert(TaskContract.TaskEntry.CONTENT_URI, contentValues);
 
@@ -84,7 +85,7 @@ public class AddPhotosActivity extends AppCompatActivity {
 
             try {
                 filePath = Util.getPath(this, getContentResolver(), data.getData());
-                Picasso.with(this).load(filePath).into(addPhoto);
+                Picasso.with(this).load(filePath).fit().into(addPhoto);
                 Log.i(TAG,filePath);
 
             }  catch (URISyntaxException e) {

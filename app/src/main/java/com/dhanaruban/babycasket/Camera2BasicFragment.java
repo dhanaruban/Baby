@@ -887,6 +887,7 @@ public class Camera2BasicFragment extends Fragment
 
     @Override
     public void onClick(View view) {
+
         new CountDownTimer(5000,1000){
 
             @Override

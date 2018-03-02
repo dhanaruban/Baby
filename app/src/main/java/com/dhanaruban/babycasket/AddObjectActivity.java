@@ -17,15 +17,17 @@ import android.widget.Toast;
 
 import com.dhanaruban.babycasket.data.ObjectContract;
 import com.dhanaruban.babycasket.data.TaskContract;
+import com.dhanaruban.babycasket.utility.Util;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 public class AddObjectActivity extends AppCompatActivity {
 
     private static int RESULT_LOAD_IMAGE = 1;
     Intent imageSelection;
-    private Uri filePath;
+    String filePath;
     private Bitmap bitmap;
     private static final String TAG = AddObjectActivity.class.getSimpleName();
 
@@ -58,8 +60,9 @@ public class AddObjectActivity extends AppCompatActivity {
                 ContentValues contentValues = new ContentValues();
                 // Put the task description and selected mPriority into the ContentValues
                 contentValues.put(ObjectContract.TaskEntry.COLUMN_OBJECT_NAME, object.getText().toString());
-                contentValues.put(ObjectContract.TaskEntry.COLUMN_OBJECT_IMAGE, filePath.getEncodedPath());
+
                 // Insert the content values via a ContentResolver
+                contentValues.put(ObjectContract.TaskEntry.COLUMN_OBJECT_IMAGE, filePath);
                 Uri uri = getContentResolver().insert(ObjectContract.TaskEntry.CONTENT_URI, contentValues);
 
 
@@ -77,13 +80,14 @@ public class AddObjectActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            filePath = data.getData();
-            Log.i(TAG,filePath.toString());
-            Picasso
-                    .with(this)
-                    .load(filePath)
-                    .fit() // resizes the image to these dimensions (in pixel). does not respect aspect ratio
-                    .into(addPhoto);
+            try {
+                filePath = Util.getPath(this, getContentResolver(), data.getData());
+                Picasso.with(this).load(filePath).into(addPhoto);
+                Log.i(TAG,filePath);
+
+            }  catch (URISyntaxException e) {
+                e.printStackTrace();
+            }
         }
     }
 

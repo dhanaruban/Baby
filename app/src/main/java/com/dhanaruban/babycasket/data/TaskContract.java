@@ -44,6 +44,7 @@ public class TaskContract {
         // "_ID" column in addition to the two below
         public static final String COLUMN_RELATIONSHIP = "relationship";
         public static final String COLUMN_IMAGE = "priority";
+        public static final String UPLOAD_STATUS = "uploadstatus";
 
 
         /*
