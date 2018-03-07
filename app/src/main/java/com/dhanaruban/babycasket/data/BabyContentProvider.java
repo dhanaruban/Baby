@@ -181,7 +181,34 @@ public class BabyContentProvider extends ContentProvider {
     public int update(@NonNull Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
 
-        throw new UnsupportedOperationException("Not yet implemented");
+        final SQLiteDatabase db = mTaskDbHelper.getWritableDatabase();
+
+        // Write URI matching code to identify the match for the tasks directory
+        int match = sUriMatcher.match(uri);
+        Uri returnUri; // URI to be returned
+
+        switch (match) {
+            case TASKS:
+                // Insert new values into the database
+                // Inserting values into tasks table
+                long id = db.update(TABLE_NAME, values, "_id=?", selectionArgs);
+                if ( id > 0 ) {
+                    returnUri = ContentUris.withAppendedId(BabyContract.TaskEntry.CONTENT_URI, id);
+                } else {
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                }
+                break;
+            // Set the value for the returnedUri and write the default case for unknown URI's
+            // Default case throws an UnsupportedOperationException
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+
+        // Notify the resolver if the uri has been changed, and return the newly inserted URI
+        getContext().getContentResolver().notifyChange(uri, null);
+
+        // Return constructed uri (this points to the newly inserted row of data)
+        return 1 ;
     }
 
 

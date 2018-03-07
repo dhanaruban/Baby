@@ -26,6 +26,7 @@ import com.dhanaruban.babycasket.data.TaskContract;
 
 import java.io.File;
 
+
 public class CustomActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
     private static int RESULT_ADD_IMAGE = 2;

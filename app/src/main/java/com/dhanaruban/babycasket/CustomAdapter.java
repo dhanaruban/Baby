@@ -29,10 +29,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amazonaws.mobile.client.AWSMobileClient;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
+import com.amazonaws.models.nosql.TasksDO;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
@@ -49,9 +52,12 @@ public class CustomAdapter  extends RecyclerView.Adapter<CustomAdapter.TaskViewH
     private Context mContext;
     private static String TAG = CustomActivity.class.getName();
     private ContentResolver mContentresolver;
+    private DynamoDBMapper dynamoDBMapper;
+
     public CustomAdapter(Context mContext,ContentResolver mContentresolver) {
         this.mContext = mContext;
         this.mContentresolver = mContentresolver;
+        initNoSQLDataConnection();
     }
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
@@ -114,10 +120,11 @@ public class CustomAdapter  extends RecyclerView.Adapter<CustomAdapter.TaskViewH
         //Set values
         holder.itemView.setTag(id);
         holder.relationshipView.setText(description);
-        Picasso.with(mContext).load(url).transform(new CircleTransform())
+        Picasso.with(mContext).load(url).fit().transform(new CircleTransform())
                 .into(holder.imageView);
         if(getItemCount()!=0 && isUploaded.equals("false")) {
             uploadData(id,url);
+            uploadNoSQLData(id, description,url,"true");
         }
 
 
@@ -147,6 +154,36 @@ public class CustomAdapter  extends RecyclerView.Adapter<CustomAdapter.TaskViewH
         }
         return temp;
     }
+
+    public void initNoSQLDataConnection() {
+        AmazonDynamoDBClient dynamoDBClient =
+                new AmazonDynamoDBClient(AWSMobileClient.getInstance().getCredentialsProvider());
+
+        dynamoDBMapper = DynamoDBMapper.builder()
+                .dynamoDBClient(dynamoDBClient)
+                .awsConfiguration(AWSMobileClient.getInstance().getConfiguration())
+                .build();
+    }
+
+    public void uploadNoSQLData(int id, String description,String url,String isUploaded) {
+        final TasksDO tasksDO = new TasksDO();
+
+        tasksDO.setUserId(String.valueOf(id));
+        tasksDO.setCOLUMNRELATIONSHIP(description);
+        tasksDO.setCOLUMNIMAGE(url);
+        tasksDO.setUPLOADSTATUS(isUploaded);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Log.i(TAG,"Unfortunately stopped");
+                dynamoDBMapper.save(tasksDO);
+
+                // Item saved
+            }
+        }).start();
+    }
+
 
     public void uploadData(int id,String filename) {
 

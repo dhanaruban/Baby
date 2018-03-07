@@ -5,13 +5,18 @@ package com.dhanaruban.babycasket;
  */
 import android.Manifest;
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -21,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.amazonaws.mobile.client.AWSMobileClient;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
@@ -28,20 +34,25 @@ import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.dhanaruban.babycasket.data.BabyContract;
+import com.dhanaruban.babycasket.data.TaskContract;
 import com.dhanaruban.babycasket.utility.CircleTransform;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.io.InputStream;
 
 
 public class BabyAdapter  extends RecyclerView.Adapter<BabyAdapter.TaskViewHolder>{
     private Cursor mCursor;
     private Context mContext;
-    private static String TAG = BabyActivity.class.getName();
-
-    public BabyAdapter(Context mContext) {
+    private static String TAG = CustomActivity.class.getName();
+    private ContentResolver mContentresolver;
+    public BabyAdapter(Context mContext,ContentResolver mContentresolver) {
         this.mContext = mContext;
+        this.mContentresolver = mContentresolver;
     }
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
@@ -70,6 +81,8 @@ public class BabyAdapter  extends RecyclerView.Adapter<BabyAdapter.TaskViewHolde
         }
     }
 
+
+
     @Override
     public TaskViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
@@ -81,6 +94,7 @@ public class BabyAdapter  extends RecyclerView.Adapter<BabyAdapter.TaskViewHolde
     }
     @Override
     public void onBindViewHolder(TaskViewHolder holder, int position) {
+
 
         // Indices for the _id, description, and priority columns
         int idIndex = mCursor.getColumnIndex(BabyContract.TaskEntry._ID);
@@ -101,11 +115,12 @@ public class BabyAdapter  extends RecyclerView.Adapter<BabyAdapter.TaskViewHolde
         //Set values
         holder.itemView.setTag(id);
         holder.babyname.setText(description);
-        Picasso.with(mContext).load(url).transform(new CircleTransform())
+        Picasso.with(mContext).load(url).fit().transform(new CircleTransform())
                 .into(holder.babyimageView);
         if(getItemCount()!=0 && isUploaded.equals("false")) {
-            uploadData(url);
+            uploadData(id,url);
         }
+
 
 
         // Programmatically set the text and color for the priority TextView
@@ -133,7 +148,8 @@ public class BabyAdapter  extends RecyclerView.Adapter<BabyAdapter.TaskViewHolde
         }
         return temp;
     }
-    public void uploadData(String filename) {
+
+    public void uploadData(int id,String filename) {
 
 
         // Initialize AWSMobileClient if not initialized upon the app startup.
@@ -159,6 +175,19 @@ public class BabyAdapter  extends RecyclerView.Adapter<BabyAdapter.TaskViewHolde
             public void onStateChanged(int id, TransferState state) {
                 if (TransferState.COMPLETED == state) {
                     Log.d(TAG,"upload successfully local");
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put(BabyContract.TaskEntry.UPLOAD_BABY_STATUS,"true");
+
+//                    ContentValues contentValues = new ContentValues();
+//                    // Put the task description and selected mPriority into the ContentValues
+//                    contentValues.put(TaskContract.TaskEntry.COLUMN_RELATIONSHIP, relation.getText().toString());
+//
+//                    contentValues.put(TaskContract.TaskEntry.COLUMN_IMAGE, filePath);
+//                    contentValues.put(TaskContract.TaskEntry.UPLOAD_STATUS,"false");
+//                    // Insert the content values via a ContentResolver
+                    String arrayId[] = {Integer.toString(id)};
+                    int uri = mContentresolver.update(BabyContract.TaskEntry.CONTENT_URI, contentValues,null,arrayId);
+
                     // Handle a completed upload.
                 }
             }

@@ -39,7 +39,7 @@ public class Harmful extends AppCompatActivity implements LoaderManager.LoaderCa
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // Initialize the adapter and attach it to the RecyclerView
-        mAdapter = new HarmfulAdapter(this);
+        mAdapter = new HarmfulAdapter(this,getContentResolver());
         mRecyclerView.setAdapter(mAdapter);
 
         /*

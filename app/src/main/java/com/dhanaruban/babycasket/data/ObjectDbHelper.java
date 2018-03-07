@@ -34,7 +34,7 @@ public class ObjectDbHelper extends SQLiteOpenHelper {
                 ObjectContract.TaskEntry._ID                + " INTEGER PRIMARY KEY, " +
                 ObjectContract.TaskEntry.COLUMN_OBJECT_NAME + " TEXT NOT NULL, " +
                 ObjectContract.TaskEntry.COLUMN_OBJECT_IMAGE    + " STRING NOT NULL, " +
-                ObjectContract.TaskEntry.UPLOAD_OBJECT_STATUS   +"STRING NOT NULL);";
+                ObjectContract.TaskEntry.UPLOAD_OBJECT_STATUS   + " STRING NOT NULL);";
 
         db.execSQL(CREATE_TABLE);
     }

@@ -64,6 +64,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.security.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -148,7 +150,7 @@ public class Camera2BasicFragment extends Fragment
 
         @Override
         public boolean onSurfaceTextureDestroyed(SurfaceTexture texture) {
-            return true;
+            return false;
         }
 
         @Override
@@ -435,7 +437,8 @@ public class Camera2BasicFragment extends Fragment
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mFile = new File(getActivity().getExternalFilesDir(null), "pic.jpg");
+        String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new java.util.Date());
+        mFile = new File(getActivity().getExternalFilesDir(null), "pic"+ timeStamp +".jpg");
     }
 
     @Override
@@ -892,12 +895,13 @@ public class Camera2BasicFragment extends Fragment
 
             @Override
             public void onFinish() {
-
+                Log.i(TAG,"onFinish reached");
             }
 
             @Override
             public void onTick(long millisUntilFinished) {
                 takePicture();
+                Log.i(TAG,"onTick reached"+millisUntilFinished);
             }
 
         }.start();

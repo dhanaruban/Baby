@@ -61,10 +61,10 @@ public class AddObjectActivity extends AppCompatActivity {
                 // Put the task description and selected mPriority into the ContentValues
                 contentValues.put(ObjectContract.TaskEntry.COLUMN_OBJECT_NAME, object.getText().toString());
 
-                // Insert the content values via a ContentResolver
                 contentValues.put(ObjectContract.TaskEntry.COLUMN_OBJECT_IMAGE, filePath);
+                contentValues.put(ObjectContract.TaskEntry.UPLOAD_OBJECT_STATUS,"false");
+                // Insert the content values via a ContentResolver
                 Uri uri = getContentResolver().insert(ObjectContract.TaskEntry.CONTENT_URI, contentValues);
-
 
                 Intent data = new Intent();
                 data.putExtra("relationShip", object.getText().toString());
@@ -82,10 +82,10 @@ public class AddObjectActivity extends AppCompatActivity {
         if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && data != null && data.getData() != null) {
             try {
                 filePath = Util.getPath(this, getContentResolver(), data.getData());
-                Picasso.with(this).load(filePath).into(addPhoto);
-                Log.i(TAG,filePath);
+                Picasso.with(this).load(filePath).fit().into(addPhoto);
+                Log.i(TAG, filePath);
 
-            }  catch (URISyntaxException e) {
+            } catch (URISyntaxException e) {
                 e.printStackTrace();
             }
         }
