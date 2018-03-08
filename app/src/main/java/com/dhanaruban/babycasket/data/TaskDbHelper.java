@@ -33,7 +33,8 @@ public class TaskDbHelper extends SQLiteOpenHelper {
         final String CREATE_TABLE = "CREATE TABLE "  + TaskContract.TaskEntry.TABLE_NAME + " (" +
                 TaskContract.TaskEntry._ID                + " INTEGER PRIMARY KEY, " +
                 TaskContract.TaskEntry.COLUMN_RELATIONSHIP + " TEXT NOT NULL, " +
-                TaskContract.TaskEntry.COLUMN_IMAGE    + " STRING NOT NULL);";
+                TaskContract.TaskEntry.COLUMN_IMAGE    + " STRING NOT NULL, " +
+                TaskContract.TaskEntry.UPLOAD_STATUS   + " STRING NOT NULL);";
 
         db.execSQL(CREATE_TABLE);
     }

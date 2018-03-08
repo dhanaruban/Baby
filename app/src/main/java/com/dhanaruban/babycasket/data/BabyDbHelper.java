@@ -33,7 +33,8 @@ public class BabyDbHelper extends SQLiteOpenHelper {
         final String CREATE_TABLE = "CREATE TABLE "  + BabyContract.TaskEntry.TABLE_NAME + " (" +
                 BabyContract.TaskEntry._ID                + " INTEGER PRIMARY KEY, " +
                 BabyContract.TaskEntry.COLUMN_NAME + " TEXT NOT NULL, " +
-                BabyContract.TaskEntry.COLUMN__BABY_IMAGE    + " STRING NOT NULL);";
+                BabyContract.TaskEntry.COLUMN__BABY_IMAGE    + " STRING NOT NULL, " +
+                BabyContract.TaskEntry.UPLOAD_BABY_STATUS   + " STRING NOT NULL);";
 
         db.execSQL(CREATE_TABLE);
     }

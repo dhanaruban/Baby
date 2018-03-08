@@ -5,6 +5,8 @@ package com.dhanaruban.babycasket;
  */
 import android.Manifest;
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -27,10 +29,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amazonaws.mobile.client.AWSMobileClient;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
+import com.amazonaws.models.nosql.TasksDO;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
@@ -46,9 +51,13 @@ public class CustomAdapter  extends RecyclerView.Adapter<CustomAdapter.TaskViewH
     private Cursor mCursor;
     private Context mContext;
     private static String TAG = CustomActivity.class.getName();
+    private ContentResolver mContentresolver;
+    private DynamoDBMapper dynamoDBMapper;
 
-    public CustomAdapter(Context mContext) {
+    public CustomAdapter(Context mContext,ContentResolver mContentresolver) {
         this.mContext = mContext;
+        this.mContentresolver = mContentresolver;
+        initNoSQLDataConnection();
     }
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
@@ -91,10 +100,12 @@ public class CustomAdapter  extends RecyclerView.Adapter<CustomAdapter.TaskViewH
     @Override
     public void onBindViewHolder(TaskViewHolder holder, int position) {
 
+
         // Indices for the _id, description, and priority columns
         int idIndex = mCursor.getColumnIndex(TaskContract.TaskEntry._ID);
         int descriptionIndex = mCursor.getColumnIndex(TaskContract.TaskEntry.COLUMN_RELATIONSHIP);
         int image = mCursor.getColumnIndex(TaskContract.TaskEntry.COLUMN_IMAGE);
+        int upload = mCursor.getColumnIndex(TaskContract.TaskEntry.UPLOAD_STATUS);
 
         mCursor.moveToPosition(position); // get to the right location in the cursor
 
@@ -102,16 +113,20 @@ public class CustomAdapter  extends RecyclerView.Adapter<CustomAdapter.TaskViewH
         final int id = mCursor.getInt(idIndex);
         String description = mCursor.getString(descriptionIndex);
         String url =  mCursor.getString(image); //"content://media" + mCursor.getString(image);
-
+        String isUploaded = mCursor.getString(upload);
         Log.i(TAG,url);
 
 
         //Set values
         holder.itemView.setTag(id);
         holder.relationshipView.setText(description);
-        Picasso.with(mContext).load(url).transform(new CircleTransform())
+        Picasso.with(mContext).load(url).fit().transform(new CircleTransform())
                 .into(holder.imageView);
-        uploadData(url);
+        if(getItemCount()!=0 && isUploaded.equals("false")) {
+            uploadData(id,url);
+            uploadNoSQLData(id, description,url,"true");
+        }
+
 
 
         // Programmatically set the text and color for the priority TextView
@@ -140,7 +155,37 @@ public class CustomAdapter  extends RecyclerView.Adapter<CustomAdapter.TaskViewH
         return temp;
     }
 
-    public void uploadData(String filename) {
+    public void initNoSQLDataConnection() {
+        AmazonDynamoDBClient dynamoDBClient =
+                new AmazonDynamoDBClient(AWSMobileClient.getInstance().getCredentialsProvider());
+
+        dynamoDBMapper = DynamoDBMapper.builder()
+                .dynamoDBClient(dynamoDBClient)
+                .awsConfiguration(AWSMobileClient.getInstance().getConfiguration())
+                .build();
+    }
+
+    public void uploadNoSQLData(int id, String description,String url,String isUploaded) {
+        final TasksDO tasksDO = new TasksDO();
+
+        tasksDO.setUserId(String.valueOf(id));
+        tasksDO.setCOLUMNRELATIONSHIP(description);
+        tasksDO.setCOLUMNIMAGE(url);
+        tasksDO.setUPLOADSTATUS(isUploaded);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Log.i(TAG,"Unfortunately stopped");
+                dynamoDBMapper.save(tasksDO);
+
+                // Item saved
+            }
+        }).start();
+    }
+
+
+    public void uploadData(int id,String filename) {
 
 
         // Initialize AWSMobileClient if not initialized upon the app startup.
@@ -158,7 +203,7 @@ public class CustomAdapter  extends RecyclerView.Adapter<CustomAdapter.TaskViewH
 //        InputStream is=file.getInputStream();
 //        s3client.putObject(new PutObjectRequest(bucketName, keyName,is,new ObjectMetadata()));
         TransferObserver uploadObserver =
-                transferUtility.upload(file.getName(), file);
+                transferUtility.upload("uploads/thenu/custom/"+file.getName(), file);
 
         uploadObserver.setTransferListener(new TransferListener() {
 
@@ -166,6 +211,19 @@ public class CustomAdapter  extends RecyclerView.Adapter<CustomAdapter.TaskViewH
             public void onStateChanged(int id, TransferState state) {
                 if (TransferState.COMPLETED == state) {
                     Log.d(TAG,"upload successfully local");
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put(TaskContract.TaskEntry.UPLOAD_STATUS,"true");
+
+//                    ContentValues contentValues = new ContentValues();
+//                    // Put the task description and selected mPriority into the ContentValues
+//                    contentValues.put(TaskContract.TaskEntry.COLUMN_RELATIONSHIP, relation.getText().toString());
+//
+//                    contentValues.put(TaskContract.TaskEntry.COLUMN_IMAGE, filePath);
+//                    contentValues.put(TaskContract.TaskEntry.UPLOAD_STATUS,"false");
+//                    // Insert the content values via a ContentResolver
+                    String arrayId[] = {Integer.toString(id)};
+                    int uri = mContentresolver.update(TaskContract.TaskEntry.CONTENT_URI, contentValues,null,arrayId);
+
                     // Handle a completed upload.
                 }
             }
@@ -191,6 +249,7 @@ public class CustomAdapter  extends RecyclerView.Adapter<CustomAdapter.TaskViewH
         // TransferListener, you can directly check the transfer state as shown here.
         if (TransferState.COMPLETED == uploadObserver.getState()) {
             Log.d(TAG,"upload successfully");
+
             // Handle a completed upload.
         }
     }

@@ -26,6 +26,7 @@ import com.dhanaruban.babycasket.data.TaskContract;
 
 import java.io.File;
 
+
 public class CustomActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
     private static int RESULT_ADD_IMAGE = 2;
@@ -48,7 +49,7 @@ public class CustomActivity extends AppCompatActivity implements LoaderManager.L
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // Initialize the adapter and attach it to the RecyclerView
-        mAdapter = new CustomAdapter(this);
+        mAdapter = new CustomAdapter(this,getContentResolver());
         mRecyclerView.setAdapter(mAdapter);
 
         /*

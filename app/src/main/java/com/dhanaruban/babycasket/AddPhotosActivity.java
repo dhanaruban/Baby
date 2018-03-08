@@ -15,6 +15,9 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amazonaws.mobile.client.AWSMobileClient;
+import com.amazonaws.models.nosql.TasksDO;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.dhanaruban.babycasket.data.TaskContract;
 import com.dhanaruban.babycasket.utility.CircleTransform;
 import com.dhanaruban.babycasket.utility.Util;
@@ -22,6 +25,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
 
 public class AddPhotosActivity extends AppCompatActivity {
 
@@ -29,6 +33,7 @@ public class AddPhotosActivity extends AppCompatActivity {
     Intent imageSelection;
     private String filePath;
     private Bitmap bitmap;
+    DynamoDBMapper dynamoDBMapper;
     private static final String TAG = AddPhotosActivity.class.getSimpleName();
 
     TextView relation;
@@ -62,9 +67,9 @@ public class AddPhotosActivity extends AppCompatActivity {
                 contentValues.put(TaskContract.TaskEntry.COLUMN_RELATIONSHIP, relation.getText().toString());
 
                 contentValues.put(TaskContract.TaskEntry.COLUMN_IMAGE, filePath);
+                contentValues.put(TaskContract.TaskEntry.UPLOAD_STATUS,"false");
                 // Insert the content values via a ContentResolver
                 Uri uri = getContentResolver().insert(TaskContract.TaskEntry.CONTENT_URI, contentValues);
-
 
                 Intent data = new Intent();
                 data.putExtra("relationShip", relation.getText().toString());
@@ -84,7 +89,7 @@ public class AddPhotosActivity extends AppCompatActivity {
 
             try {
                 filePath = Util.getPath(this, getContentResolver(), data.getData());
-                Picasso.with(this).load(filePath).into(addPhoto);
+                Picasso.with(this).load(filePath).fit().into(addPhoto);
                 Log.i(TAG,filePath);
 
             }  catch (URISyntaxException e) {

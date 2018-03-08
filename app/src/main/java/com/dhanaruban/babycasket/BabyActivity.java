@@ -39,7 +39,7 @@ public class BabyActivity extends AppCompatActivity implements LoaderManager.Loa
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // Initialize the adapter and attach it to the RecyclerView
-        mAdapter = new BabyAdapter(this);
+        mAdapter = new BabyAdapter(this,getContentResolver());
         mRecyclerView.setAdapter(mAdapter);
 
         /*

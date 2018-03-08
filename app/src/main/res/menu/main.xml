@@ -5,12 +5,18 @@
 
     <item
         android:orderInCategory="1"
+        android:title="Settings"
+        android:id="@+id/set"
+        />
+
+    <item
+        android:orderInCategory="2"
         android:title="Baby Profile"
         android:id="@+id/action_baby"
         />
 
     <item
-        android:orderInCategory="2"
+        android:orderInCategory="3"
         android:title="@string/action_settings"
         android:id="@+id/action_settings"
         />
@@ -19,15 +25,15 @@
         android:title="@string/action_about"
         android:id="@+id/action_about"/>
     <item
-        android:orderInCategory="3"
+        android:orderInCategory="5"
         android:title="@string/action_harmful"
         android:id="@+id/action_harmful"/>
     <item
-        android:orderInCategory="5"
+        android:orderInCategory="6"
         android:title="@string/action_logout"
         android:id="@+id/action_logout"/>
     <item
-        android:orderInCategory="6"
+        android:orderInCategory="7"
         android:title="Capture"
         android:id="@+id/action_camera"/>
 </menu>

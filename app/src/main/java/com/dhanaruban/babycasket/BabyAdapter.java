@@ -3,12 +3,21 @@ package com.dhanaruban.babycasket;
 /**
  * Created by thenu on 21-02-2018.
  */
+import android.Manifest;
+import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -17,20 +26,63 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.amazonaws.mobile.client.AWSMobileClient;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.dhanaruban.babycasket.data.BabyContract;
+import com.dhanaruban.babycasket.data.TaskContract;
 import com.dhanaruban.babycasket.utility.CircleTransform;
 import com.squareup.picasso.Picasso;
+
+import java.io.File;
+import java.io.InputStream;
 
 
 public class BabyAdapter  extends RecyclerView.Adapter<BabyAdapter.TaskViewHolder>{
     private Cursor mCursor;
     private Context mContext;
-    private static String TAG = BabyActivity.class.getName();
-
-    public BabyAdapter(Context mContext) {
+    private static String TAG = CustomActivity.class.getName();
+    private ContentResolver mContentresolver;
+    public BabyAdapter(Context mContext,ContentResolver mContentresolver) {
         this.mContext = mContext;
+        this.mContentresolver = mContentresolver;
     }
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+
+    /**
+     * Checks if the app has permission to write to device storage
+     *
+     * If the app does not has permission then the user will be prompted to grant permissions
+     *
+     * @param activity
+     */
+    public static void verifyStoragePermissions(Activity activity) {
+        // Check if we have write permission
+        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    activity,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+        }
+    }
+
+
+
     @Override
     public TaskViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
@@ -43,17 +95,19 @@ public class BabyAdapter  extends RecyclerView.Adapter<BabyAdapter.TaskViewHolde
     @Override
     public void onBindViewHolder(TaskViewHolder holder, int position) {
 
+
         // Indices for the _id, description, and priority columns
         int idIndex = mCursor.getColumnIndex(BabyContract.TaskEntry._ID);
         int descriptionIndex = mCursor.getColumnIndex(BabyContract.TaskEntry.COLUMN_NAME);
         int image = mCursor.getColumnIndex(BabyContract.TaskEntry.COLUMN__BABY_IMAGE);
-
+        int upload = mCursor.getColumnIndex(BabyContract.TaskEntry.UPLOAD_BABY_STATUS);
         mCursor.moveToPosition(position); // get to the right location in the cursor
 
         // Determine the values of the wanted data
         final int id = mCursor.getInt(idIndex);
         String description = mCursor.getString(descriptionIndex);
-        String url =  "content://media" + mCursor.getString(image);
+        String url = mCursor.getString(image);
+        String isUploaded = mCursor.getString(upload);
 
         Log.i(TAG,url);
 
@@ -61,8 +115,12 @@ public class BabyAdapter  extends RecyclerView.Adapter<BabyAdapter.TaskViewHolde
         //Set values
         holder.itemView.setTag(id);
         holder.babyname.setText(description);
-        Picasso.with(mContext).load(url).transform(new CircleTransform())
+        Picasso.with(mContext).load(url).fit().transform(new CircleTransform())
                 .into(holder.babyimageView);
+        if(getItemCount()!=0 && isUploaded.equals("false")) {
+            uploadData(id,url);
+        }
+
 
 
         // Programmatically set the text and color for the priority TextView
@@ -89,6 +147,75 @@ public class BabyAdapter  extends RecyclerView.Adapter<BabyAdapter.TaskViewHolde
             this.notifyDataSetChanged();
         }
         return temp;
+    }
+
+    public void uploadData(int id,String filename) {
+
+
+        // Initialize AWSMobileClient if not initialized upon the app startup.
+        AWSMobileClient.getInstance().initialize(mContext).execute();
+
+        TransferUtility transferUtility =
+                TransferUtility.builder()
+                        .context(mContext)
+                        .awsConfiguration(AWSMobileClient.getInstance().getConfiguration())
+                        .s3Client(new AmazonS3Client(AWSMobileClient.getInstance().getCredentialsProvider()))
+                        .build();
+        Log.d(TAG,transferUtility.toString());
+
+        File file = new File(filename);
+//        InputStream is=file.getInputStream();
+//        s3client.putObject(new PutObjectRequest(bucketName, keyName,is,new ObjectMetadata()));
+        TransferObserver uploadObserver =
+                transferUtility.upload("uploads/thenu/custom/"+file.getName(), file);
+
+        uploadObserver.setTransferListener(new TransferListener() {
+
+            @Override
+            public void onStateChanged(int id, TransferState state) {
+                if (TransferState.COMPLETED == state) {
+                    Log.d(TAG,"upload successfully local");
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put(BabyContract.TaskEntry.UPLOAD_BABY_STATUS,"true");
+
+//                    ContentValues contentValues = new ContentValues();
+//                    // Put the task description and selected mPriority into the ContentValues
+//                    contentValues.put(TaskContract.TaskEntry.COLUMN_RELATIONSHIP, relation.getText().toString());
+//
+//                    contentValues.put(TaskContract.TaskEntry.COLUMN_IMAGE, filePath);
+//                    contentValues.put(TaskContract.TaskEntry.UPLOAD_STATUS,"false");
+//                    // Insert the content values via a ContentResolver
+                    String arrayId[] = {Integer.toString(id)};
+                    int uri = mContentresolver.update(BabyContract.TaskEntry.CONTENT_URI, contentValues,null,arrayId);
+
+                    // Handle a completed upload.
+                }
+            }
+
+            @Override
+            public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
+                float percentDonef = ((float)bytesCurrent/(float)bytesTotal) * 100;
+                int percentDone = (int)percentDonef;
+
+                Log.d(TAG, "   ID:" + id + "   bytesCurrent: " + bytesCurrent + "   bytesTotal: " + bytesTotal + " " + percentDone + "%");
+            }
+
+            @Override
+            public void onError(int id, Exception ex) {
+                Log.d(TAG,"upload fail local" + id);
+                ex.printStackTrace();
+                // Handle errors
+            }
+
+        });
+
+        // If your upload does not trigger the onStateChanged method inside your
+        // TransferListener, you can directly check the transfer state as shown here.
+        if (TransferState.COMPLETED == uploadObserver.getState()) {
+            Log.d(TAG,"upload successfully");
+
+            // Handle a completed upload.
+        }
     }
     class TaskViewHolder extends RecyclerView.ViewHolder {
 
