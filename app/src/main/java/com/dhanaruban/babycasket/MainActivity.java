@@ -14,7 +14,9 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ToggleButton;
 
 import com.amazonaws.mobile.auth.ui.SignInUI;
 import com.amazonaws.mobile.client.AWSMobileClient;
@@ -31,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     public static PinpointManager pinpointManager;
     public static final String LOG_TAG = MainActivity.class.getSimpleName();
 //    public static String ALARM_TO_SET = "ALRMTOSEND";
+    ToggleButton mIsmonitorOn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +72,16 @@ public class MainActivity extends AppCompatActivity {
         pinpointManager.getAnalyticsClient().submitEvents();
 
         setContentView(R.layout.activity_main);
+
+        mIsmonitorOn = (ToggleButton) findViewById(R.id.toggleButton);
+
+        mIsmonitorOn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent addPhoto = new Intent(getApplicationContext(),DetectorActivity.class);
+                startActivity(addPhoto);
+            }
+        } );
 
 
 
