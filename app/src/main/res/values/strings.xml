@@ -16,5 +16,6 @@
     <string name="camera_error">Camera Error</string>
     <string name="description_info">Description Info</string>
     <string name="picture">Picture</string>
+    <string name="activity_name_detection">Detection</string>
 
 </resources>
