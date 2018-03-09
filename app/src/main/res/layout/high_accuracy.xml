@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:text="CCTV/Tron Connection Details"
+        android:textSize="25dp"
+        android:textStyle="bold" />
+
+    <EditText
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="Your IP Address :192.168.1.100"
+        android:gravity="start"
+        android:paddingBottom="16dp"
+        android:paddingEnd="64dp"
+        android:paddingLeft="64dp"
+        android:paddingRight="64dp"
+        android:paddingStart="64dp"
+        android:paddingTop="16dp"/>
+    <EditText
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="Your Port Number :3000"
+        android:gravity="start"
+        android:paddingBottom="16dp"
+        android:paddingEnd="64dp"
+        android:paddingLeft="64dp"
+        android:paddingRight="64dp"
+        android:paddingStart="64dp"
+        android:paddingTop="16dp"/>
+    <Button
+        android:id="@+id/connect"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="CONNECT"
+        android:layout_gravity="bottom"/>
+
+    
+
+</LinearLayout>

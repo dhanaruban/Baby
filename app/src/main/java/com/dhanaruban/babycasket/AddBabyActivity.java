@@ -30,7 +30,8 @@ public class AddBabyActivity extends AppCompatActivity {
     Intent imageSelection;
     String filePath;
     private Bitmap bitmap;
-    private static final String TAG = AddBabyActivity.class.getSimpleName();
+    private Uri localPath;
+    private static final String TAG = AddObjectActivity.class.getSimpleName();
 
     TextView object;
     ImageButton addPhoto;
@@ -61,10 +62,11 @@ public class AddBabyActivity extends AppCompatActivity {
                 ContentValues contentValues = new ContentValues();
                 // Put the task description and selected mPriority into the ContentValues
                 contentValues.put(BabyContract.TaskEntry.COLUMN_NAME, object.getText().toString());
+
                 contentValues.put(BabyContract.TaskEntry.COLUMN__BABY_IMAGE, filePath);
+                contentValues.put(BabyContract.TaskEntry.UPLOAD_BABY_STATUS,"false");
                 // Insert the content values via a ContentResolver
                 Uri uri = getContentResolver().insert(BabyContract.TaskEntry.CONTENT_URI, contentValues);
-
 
                 Intent data = new Intent();
                 data.putExtra("relationShip", object.getText().toString());
@@ -82,13 +84,13 @@ public class AddBabyActivity extends AppCompatActivity {
         if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && data != null && data.getData() != null) {
             try {
                 filePath = Util.getPath(this, getContentResolver(), data.getData());
-                Picasso.with(this).load(filePath).fit().into(addPhoto);
-                Log.i(TAG,filePath);
+                localPath=data.getData();
+                Picasso.with(this).load(localPath).fit().into(addPhoto);
+                Log.i(TAG, filePath);
 
-            }  catch (URISyntaxException e) {
+            } catch (URISyntaxException e) {
                 e.printStackTrace();
             }
-
         }
     }
 

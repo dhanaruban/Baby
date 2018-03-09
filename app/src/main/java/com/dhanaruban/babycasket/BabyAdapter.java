@@ -115,7 +115,7 @@ public class BabyAdapter  extends RecyclerView.Adapter<BabyAdapter.TaskViewHolde
         //Set values
         holder.itemView.setTag(id);
         holder.babyname.setText(description);
-        Picasso.with(mContext).load(url).fit().transform(new CircleTransform())
+        Picasso.with(mContext).load(url).transform(new CircleTransform())
                 .into(holder.babyimageView);
         if(getItemCount()!=0 && isUploaded.equals("false")) {
             uploadData(id,url);

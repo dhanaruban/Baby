@@ -29,6 +29,7 @@ import com.google.android.gms.iid.InstanceID;
 public class MainActivity extends AppCompatActivity {
 
     public static PinpointManager pinpointManager;
+//    private OnFragmentInteractionListener mListener;
     public static final String LOG_TAG = MainActivity.class.getSimpleName();
 //    public static String ALARM_TO_SET = "ALRMTOSEND";
 
@@ -82,6 +83,35 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.main,menu);
         return true;
     }
+//    @Override
+//    public void onAttach(Context context) {
+//        super.onAttach(context);
+//        if (context instanceof OnFragmentInteractionListener) {
+//            mListener = (OnFragmentInteractionListener) context;
+//        } else {
+//            throw new RuntimeException(context.toString()
+//                    + " must implement OnFragmentInteractionListener");
+//        }
+//    }
+
+//    @Override
+//    public void onDetach() {
+//        super.onDetach();
+//        mListener = null;
+//    }
+//
+//    /**
+//     * Interface with the Activity.
+//     */
+//    public interface OnFragmentInteractionListener {
+//        void onButtonPress(boolean signIn);
+//        void showPopup(String title, String content);
+//    }
+//    public void onButtonPressed() {
+//        if (mListener != null) {
+//            mListener.onButtonPress(SIGN_OUT);
+//        }
+//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -102,10 +132,15 @@ public class MainActivity extends AppCompatActivity {
 
             return true;
         } else if (id == R.id.action_logout) {
-           Intent loginscreen = new Intent(this, AuthenticatorActivity.class);
-            loginscreen.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(loginscreen);
-            this.finish();
+            //this.finish();
+            SignInUI signin = (SignInUI) AWSMobileClient.getInstance()
+                    .getClient(this, SignInUI.class);
+            signin.login(this, MainActivity.class).execute();
+
+//           Intent loginscreen = new Intent(this, AuthenticatorActivity.class);
+//            loginscreen.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//            startActivity(loginscreen);
+            finish();
         } else if (id == R.id.action_harmful) {
             Intent intent = new Intent(getApplicationContext(), Harmful.class);
             startActivity(intent);

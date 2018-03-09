@@ -1,26 +1,14 @@
 package com.dhanaruban.babycasket.data;
 
-/**
- * Created by thenu on 21-02-2018.
- */
-
 import android.net.Uri;
 import android.provider.BaseColumns;
 
+/**
+ * Created by thenu on 08-03-2018.
+ */
 
-public class TaskContract {
-
-    /* Add content provider constants to the Contract
-     Clients need to know how to access the task data, and it's your job to provide
-     these content URI's for the path to that data:
-        1) Content authority,
-        2) Base content URI,
-        3) Path(s) to the tasks directory
-        4) Content URI for data in the TaskEntry class
-      */
-
-    // The authority, which is how your code knows which Content Provider to access
-    public static final String AUTHORITY = "com.dhanaruban.babycasket";
+public class UserSettingContract {
+    public static final String AUTHORITY = "com.dhanaruban.babycasket.Settings";
 
     // The base content URI = "content://" + <authority>
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);
@@ -38,15 +26,12 @@ public class TaskContract {
 
 
         // Task table and column names
-        public static final String TABLE_NAME = "tasks";
+        public static final String TABLE_NAME = "usersetting";
 
         // Since TaskEntry implements the interface "BaseColumns", it has an automatically produced
         // "_ID" column in addition to the two below
-        public static final String COLUMN_RELATIONSHIP = "relationship";
-        public static final String COLUMN_IMAGE = "priority";
-        public static final String UPLOAD_STATUS = "uploadstatus";
-        public static final String  TASK_LOCAL_PATH = "localpath";
 
+        public static final String COLUMN_OPTION = "option";
 
 
         /*
@@ -74,3 +59,5 @@ public class TaskContract {
 
     }
 }
+
+

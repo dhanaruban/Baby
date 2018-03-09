@@ -5,20 +5,20 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 /**
- * Created by thenu on 21-02-2018.
+ * Created by thenu on 08-03-2018.
  */
 
-public class TaskDbHelper extends SQLiteOpenHelper {
+public class UserSettingDbHelper extends SQLiteOpenHelper {
 
     // The name of the database
-    private static final String DATABASE_NAME = "tasksDb.db";
+    private static final String DATABASE_NAME = "usersetting.db";
 
     // If you change the database schema, you must increment the database version
     private static final int VERSION = 1;
 
 
     // Constructor
-    TaskDbHelper(Context context) {
+    UserSettingDbHelper(Context context) {
         super(context, DATABASE_NAME, null, VERSION);
     }
 
@@ -30,12 +30,9 @@ public class TaskDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
 
         // Create tasks table (careful to follow SQL formatting rules)
-        final String CREATE_TABLE = "CREATE TABLE "  + TaskContract.TaskEntry.TABLE_NAME + " (" +
-                TaskContract.TaskEntry._ID                + " INTEGER PRIMARY KEY, " +
-                TaskContract.TaskEntry.COLUMN_RELATIONSHIP + " TEXT NOT NULL, " +
-                TaskContract.TaskEntry.COLUMN_IMAGE    + " STRING NOT NULL, " +
-                TaskContract.TaskEntry.TASK_LOCAL_PATH    + " STRING NOT NULL, " +
-                TaskContract.TaskEntry.UPLOAD_STATUS   + " STRING NOT NULL);";
+        final String CREATE_TABLE = "CREATE TABLE "  + UserSettingContract.TaskEntry.TABLE_NAME + " (" +
+                UserSettingContract.TaskEntry._ID                + " INTEGER PRIMARY KEY, " +
+                UserSettingContract.TaskEntry.COLUMN_OPTION   + " INTEGER NOT NULL);";
 
         db.execSQL(CREATE_TABLE);
     }
@@ -47,8 +44,9 @@ public class TaskDbHelper extends SQLiteOpenHelper {
      */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TaskContract.TaskEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + UserSettingContract.TaskEntry.TABLE_NAME);
         onCreate(db);
     }
 }
+
 

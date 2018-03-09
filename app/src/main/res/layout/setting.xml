@@ -52,12 +52,83 @@
             android:layout_width="wrap_content"
             android:layout_height="1dp"
             android:background="@android:color/darker_gray"/>
-        <TextView
-            android:padding="25dp"
-            android:textSize="15sp"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/tv"/>
-
     </RadioGroup>
+
+    <TextView
+        android:id="@+id/tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="25dp"
+        android:textSize="15sp"
+        android:visibility="visible"/>
+
+
+        <!--android:id="@+id/linear"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="horizontal"-->
+        <!--android:visibility="visible">-->
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/relative"
+        android:visibility="invisible">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:text="CCTV/Tron Connection Details"
+            android:textSize="25dp"
+            android:textStyle="bold"
+            android:visibility="visible"
+            android:id="@+id/cctv"/>
+
+        <EditText
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Your IP Address :192.168.1.100"
+            android:layout_below="@+id/cctv"
+            android:id="@+id/ip"
+            android:inputType="textPersonName"/>
+            <!--android:paddingBottom="16dp"-->
+            <!--android:paddingEnd="64dp"-->
+            <!--android:paddingLeft="64dp"-->
+            <!--android:paddingRight="64dp"-->
+            <!--android:paddingStart="64dp"-->
+            <!--android:paddingTop="16dp" />-->
+
+        <!--android:paddingBottom="16dp"-->
+            <!--android:paddingEnd="64dp"-->
+            <!--android:paddingLeft="64dp"-->
+            <!--android:paddingRight="64dp"-->
+            <!--android:paddingStart="64dp"-->
+            <!--android:paddingTop="16dp"-->
+            <!--android:visibility="visible" />-->
+        <EditText
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Your Port Number :3000"
+            android:layout_below="@+id/ip"
+            android:id="@+id/port"
+            android:inputType="textPersonName"/>
+
+        <Button
+            android:id="@+id/connect"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:text="CONNECT"
+            android:visibility="visible"
+            android:layout_below="@+id/port"/>
+</RelativeLayout>
+
+
+
+
+
 </LinearLayout>
