@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
 //    private OnFragmentInteractionListener mListener;
     public static final String LOG_TAG = MainActivity.class.getSimpleName();
 //    public static String ALARM_TO_SET = "ALRMTOSEND";
-    ToggleButton mIsmonitorOn;
+    Button mIsmonitorOn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        mIsmonitorOn = (ToggleButton) findViewById(R.id.toggleButton);
+        mIsmonitorOn = (Button) findViewById(R.id.monitorButton);
 
         mIsmonitorOn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
             //this.finish();
             SignInUI signin = (SignInUI) AWSMobileClient.getInstance()
                     .getClient(this, SignInUI.class);
-            signin.login(this, MainActivity.class).execute();
+            signin.login(this, AuthenticatorActivity.class).execute();
 
 //           Intent loginscreen = new Intent(this, AuthenticatorActivity.class);
 //            loginscreen.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
