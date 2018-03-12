@@ -21,11 +21,11 @@
         android:id="@+id/action_settings"
         />
     <item
-        android:orderInCategory="4"
+        android:orderInCategory="5"
         android:title="@string/action_about"
         android:id="@+id/action_about"/>
     <item
-        android:orderInCategory="5"
+        android:orderInCategory="4"
         android:title="@string/action_harmful"
         android:id="@+id/action_harmful"/>
     <item

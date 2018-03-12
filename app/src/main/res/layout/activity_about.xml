@@ -66,10 +66,11 @@
         android:textAlignment="center"
         />
     <Button
-        android:id="@+id/alarm"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:text="Alarm" />
+        android:layout_height="wrap_content"
+        android:text="Alarm"
+        android:id="@+id/alarm"/>
+
 
 
 </LinearLayout>

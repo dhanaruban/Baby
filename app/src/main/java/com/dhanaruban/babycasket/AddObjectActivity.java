@@ -29,6 +29,7 @@ public class AddObjectActivity extends AppCompatActivity {
     Intent imageSelection;
     String filePath;
     private Bitmap bitmap;
+    private Uri localPath;
     private static final String TAG = AddObjectActivity.class.getSimpleName();
 
     TextView object;
@@ -82,7 +83,8 @@ public class AddObjectActivity extends AppCompatActivity {
         if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && data != null && data.getData() != null) {
             try {
                 filePath = Util.getPath(this, getContentResolver(), data.getData());
-                Picasso.with(this).load(filePath).fit().into(addPhoto);
+                localPath = data.getData();
+                Picasso.with(this).load(localPath).fit().into(addPhoto);
                 Log.i(TAG, filePath);
 
             } catch (URISyntaxException e) {

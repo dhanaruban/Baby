@@ -53,11 +53,12 @@ public class CustomAdapter  extends RecyclerView.Adapter<CustomAdapter.TaskViewH
     private static String TAG = CustomActivity.class.getName();
     private ContentResolver mContentresolver;
     private DynamoDBMapper dynamoDBMapper;
+    private Uri localPath;
 
     public CustomAdapter(Context mContext,ContentResolver mContentresolver) {
         this.mContext = mContext;
         this.mContentresolver = mContentresolver;
-        initNoSQLDataConnection();
+//        initNoSQLDataConnection();
     }
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
@@ -106,25 +107,28 @@ public class CustomAdapter  extends RecyclerView.Adapter<CustomAdapter.TaskViewH
         int descriptionIndex = mCursor.getColumnIndex(TaskContract.TaskEntry.COLUMN_RELATIONSHIP);
         int image = mCursor.getColumnIndex(TaskContract.TaskEntry.COLUMN_IMAGE);
         int upload = mCursor.getColumnIndex(TaskContract.TaskEntry.UPLOAD_STATUS);
+        int localFile = mCursor.getColumnIndex(TaskContract.TaskEntry.TASK_LOCAL_PATH);
 
         mCursor.moveToPosition(position); // get to the right location in the cursor
 
         // Determine the values of the wanted data
         final int id = mCursor.getInt(idIndex);
         String description = mCursor.getString(descriptionIndex);
-        String url =  mCursor.getString(image); //"content://media" + mCursor.getString(image);
+        String url =  mCursor.getString(image);//"content://media" + mCursor.getString(image);
         String isUploaded = mCursor.getString(upload);
+        String localPath = "content://media" + mCursor.getString(localFile);
         Log.i(TAG,url);
+        Log.i(TAG,localPath);
 
 
         //Set values
         holder.itemView.setTag(id);
         holder.relationshipView.setText(description);
-        Picasso.with(mContext).load(url).fit().transform(new CircleTransform())
-                .into(holder.imageView);
+        Uri localUri = Uri.parse(localPath);
+        Picasso.with(mContext).load(url).fit().into(holder.imageView);
         if(getItemCount()!=0 && isUploaded.equals("false")) {
             uploadData(id,url);
-            uploadNoSQLData(id, description,url,"true");
+//            uploadNoSQLData(id, description,url,"true");
         }
 
 
@@ -155,34 +159,34 @@ public class CustomAdapter  extends RecyclerView.Adapter<CustomAdapter.TaskViewH
         return temp;
     }
 
-    public void initNoSQLDataConnection() {
-        AmazonDynamoDBClient dynamoDBClient =
-                new AmazonDynamoDBClient(AWSMobileClient.getInstance().getCredentialsProvider());
-
-        dynamoDBMapper = DynamoDBMapper.builder()
-                .dynamoDBClient(dynamoDBClient)
-                .awsConfiguration(AWSMobileClient.getInstance().getConfiguration())
-                .build();
-    }
-
-    public void uploadNoSQLData(int id, String description,String url,String isUploaded) {
-        final TasksDO tasksDO = new TasksDO();
-
-        tasksDO.setUserId(String.valueOf(id));
-        tasksDO.setCOLUMNRELATIONSHIP(description);
-        tasksDO.setCOLUMNIMAGE(url);
-        tasksDO.setUPLOADSTATUS(isUploaded);
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Log.i(TAG,"Unfortunately stopped");
-                dynamoDBMapper.save(tasksDO);
-
-                // Item saved
-            }
-        }).start();
-    }
+//    public void initNoSQLDataConnection() {
+//        AmazonDynamoDBClient dynamoDBClient =
+//                new AmazonDynamoDBClient(AWSMobileClient.getInstance().getCredentialsProvider());
+//
+//        dynamoDBMapper = DynamoDBMapper.builder()
+//                .dynamoDBClient(dynamoDBClient)
+//                .awsConfiguration(AWSMobileClient.getInstance().getConfiguration())
+//                .build();
+//    }
+//
+//    public void uploadNoSQLData(int id, String description,String url,String isUploaded) {
+//        final TasksDO tasksDO = new TasksDO();
+//
+//        tasksDO.setUserId(String.valueOf(id));
+//        tasksDO.setCOLUMNRELATIONSHIP(description);
+//        tasksDO.setCOLUMNIMAGE(url);
+//        tasksDO.setUPLOADSTATUS(isUploaded);
+//
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                Log.i(TAG,"Unfortunately stopped");
+//                dynamoDBMapper.save(tasksDO);
+//
+//                // Item saved
+//            }
+//        }).start();
+//    }
 
 
     public void uploadData(int id,String filename) {

@@ -91,6 +91,8 @@ public class BabyAdapter  extends RecyclerView.Adapter<BabyAdapter.TaskViewHolde
                 .inflate(R.layout.baby_layout, parent, false);
 
         return new TaskViewHolder(view);
+
+
     }
     @Override
     public void onBindViewHolder(TaskViewHolder holder, int position) {
@@ -109,17 +111,17 @@ public class BabyAdapter  extends RecyclerView.Adapter<BabyAdapter.TaskViewHolde
         String url = mCursor.getString(image);
         String isUploaded = mCursor.getString(upload);
 
+
         Log.i(TAG,url);
 
 
         //Set values
         holder.itemView.setTag(id);
         holder.babyname.setText(description);
-        Picasso.with(mContext).load(url).fit().transform(new CircleTransform())
-                .into(holder.babyimageView);
-        if(getItemCount()!=0 && isUploaded.equals("false")) {
-            uploadData(id,url);
-        }
+        Picasso.with(mContext).load(url).transform(new CircleTransform()).into(holder.babyimageView);
+//        if(getItemCount()!=0 && isUploaded.equals("false")) {
+//            uploadData(id,url);
+//        }
 
 
 

@@ -37,6 +37,7 @@
         android:layout_gravity="center"
         android:minHeight="160dp"
         android:minWidth="160dp"
+        android:padding="20dp"
         app:srcCompat="@drawable/addperson" />
 
     <Button
@@ -44,6 +45,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="ADD"
+        android:padding="40dp"
         android:layout_gravity="bottom"/>
 
 </LinearLayout>
