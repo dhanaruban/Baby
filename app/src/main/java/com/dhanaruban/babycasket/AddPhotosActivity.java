@@ -32,8 +32,10 @@ public class AddPhotosActivity extends AppCompatActivity {
     private static int RESULT_LOAD_IMAGE = 1;
     Intent imageSelection;
     private String filePath;
+    private Uri localPath;
     private Bitmap bitmap;
     DynamoDBMapper dynamoDBMapper;
+    private int mPriority;
     private static final String TAG = AddPhotosActivity.class.getSimpleName();
 
     TextView relation;
@@ -68,6 +70,7 @@ public class AddPhotosActivity extends AppCompatActivity {
 
                 contentValues.put(TaskContract.TaskEntry.COLUMN_IMAGE, filePath);
                 contentValues.put(TaskContract.TaskEntry.UPLOAD_STATUS,"false");
+                contentValues.put(TaskContract.TaskEntry.TASK_LOCAL_PATH, localPath.getEncodedPath() );
                 // Insert the content values via a ContentResolver
                 Uri uri = getContentResolver().insert(TaskContract.TaskEntry.CONTENT_URI, contentValues);
 
@@ -89,8 +92,10 @@ public class AddPhotosActivity extends AppCompatActivity {
 
             try {
                 filePath = Util.getPath(this, getContentResolver(), data.getData());
-                Picasso.with(this).load(filePath).fit().into(addPhoto);
+                localPath = data.getData();
+                Picasso.with(this).load(localPath).fit().into(addPhoto);
                 Log.i(TAG,filePath);
+                Log.i(TAG,localPath.toString());
 
             }  catch (URISyntaxException e) {
                 e.printStackTrace();

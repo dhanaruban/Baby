@@ -1,9 +1,5 @@
 package com.dhanaruban.babycasket.data;
 
-/**
- * Created by thenu on 21-02-2018.
- */
-
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -14,11 +10,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
-import static com.dhanaruban.babycasket.data.BabyContract.TaskEntry.TABLE_NAME;
+import static com.dhanaruban.babycasket.data.UserSettingContract.TaskEntry.TABLE_NAME;
 
+/**
+ * Created by thenu on 08-03-2018.
+ */
 
-// Verify that TaskContentProvider extends from ContentProvider and implements required methods
-public class BabyContentProvider extends ContentProvider {
+public class UserSettingContentProvider extends ContentProvider {
 
     // Define final integer constants for the directory of tasks and a single item.
     // It's convention to use 100, 200, 300, etc for directories,
@@ -44,14 +42,14 @@ public class BabyContentProvider extends ContentProvider {
           For each kind of uri you may want to access, add the corresponding match with addURI.
           The two calls below add matches for the task directory and a single item by ID.
          */
-        uriMatcher.addURI(BabyContract.AUTHORITY, BabyContract.PATH_TASKS, TASKS);
-        uriMatcher.addURI(BabyContract.AUTHORITY, BabyContract.PATH_TASKS + "/#", TASK_WITH_ID);
+        uriMatcher.addURI(UserSettingContract.AUTHORITY, UserSettingContract.PATH_TASKS, TASKS);
+        uriMatcher.addURI(UserSettingContract.AUTHORITY, UserSettingContract.PATH_TASKS + "/#", TASK_WITH_ID);
 
         return uriMatcher;
     }
 
     // Member variable for a TaskDbHelper that's initialized in the onCreate() method
-    private BabyDbHelper mTaskDbHelper;
+    private UserSettingDbHelper mTaskDbHelper;
 
     /* onCreate() is where you should initialize anything you’ll need to setup
     your underlying data source.
@@ -64,7 +62,7 @@ public class BabyContentProvider extends ContentProvider {
         // [Hint] Declare the DbHelper as a global variable
 
         Context context = getContext();
-        mTaskDbHelper = new BabyDbHelper(context);
+        mTaskDbHelper = new UserSettingDbHelper(context);
         return true;
     }
 
@@ -85,9 +83,9 @@ public class BabyContentProvider extends ContentProvider {
                 // Inserting values into tasks table
                 long id = db.insert(TABLE_NAME, null, values);
                 if ( id > 0 ) {
-                    returnUri = ContentUris.withAppendedId(BabyContract.TaskEntry.CONTENT_URI, id);
+                    returnUri = ContentUris.withAppendedId(UserSettingContract.TaskEntry.CONTENT_URI, id);
                 } else {
-                    throw new android.database.SQLException("Failed to insert row into " + uri );
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
                 }
                 break;
             // Set the value for the returnedUri and write the default case for unknown URI's
@@ -193,7 +191,7 @@ public class BabyContentProvider extends ContentProvider {
                 // Inserting values into tasks table
                 long id = db.update(TABLE_NAME, values, "_id=?", selectionArgs);
                 if ( id > 0 ) {
-                    returnUri = ContentUris.withAppendedId(BabyContract.TaskEntry.CONTENT_URI, id);
+                    returnUri = ContentUris.withAppendedId(UserSettingContract.TaskEntry.CONTENT_URI, id);
                 } else {
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 }
@@ -219,4 +217,3 @@ public class BabyContentProvider extends ContentProvider {
     }
 
 }
-

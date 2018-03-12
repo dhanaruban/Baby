@@ -115,7 +115,7 @@ public class HarmfulAdapter  extends RecyclerView.Adapter<HarmfulAdapter.TaskVie
         //Set values
         holder.itemView.setTag(id);
         holder.objectname.setText(description);
-        Picasso.with(mContext).load(url).fit().transform(new CircleTransform())
+        Picasso.with(mContext).load(url).transform(new CircleTransform())
                 .into(holder.objectimageView);
         if(getItemCount()!=0 && isUploaded.equals("false")) {
             uploadData(id,url);
