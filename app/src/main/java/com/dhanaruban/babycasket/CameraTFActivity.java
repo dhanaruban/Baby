@@ -39,6 +39,7 @@ import android.util.Size;
 import android.view.KeyEvent;
 import android.view.Surface;
 import android.view.WindowManager;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import org.tensorflow.demo.env.ImageUtils;
@@ -68,6 +69,8 @@ public abstract class CameraTFActivity extends Activity
   protected int previewWidth = 0;
   protected int previewHeight = 0;
 
+  protected static Switch alarmSwitch;
+
   private Runnable postInferenceCallback;
   private Runnable imageConverter;
 
@@ -78,6 +81,8 @@ public abstract class CameraTFActivity extends Activity
     getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
     setContentView(R.layout.activity_tfcamera);
+
+    alarmSwitch = (Switch) findViewById(R.id.switch1);
 
     if (hasPermission()) {
       setFragment();

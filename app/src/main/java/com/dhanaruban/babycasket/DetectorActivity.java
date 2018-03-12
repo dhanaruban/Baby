@@ -26,9 +26,11 @@ import android.graphics.Paint.Style;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.media.ImageReader.OnImageAvailableListener;
+import android.media.MediaPlayer;
 import android.os.SystemClock;
 import android.util.Size;
 import android.util.TypedValue;
+import android.view.View;
 import android.widget.Toast;
 
 import org.tensorflow.demo.Classifier;
@@ -89,6 +91,7 @@ public class DetectorActivity extends CameraTFActivity implements OnImageAvailab
   private static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.6f;
   private static final float MINIMUM_CONFIDENCE_MULTIBOX = 0.1f;
   private static final float MINIMUM_CONFIDENCE_YOLO = 0.25f;
+  private static MediaPlayer mp = new MediaPlayer();
 
   private static final boolean MAINTAIN_ASPECT = MODE == DetectorMode.YOLO;
 
@@ -325,6 +328,17 @@ public class DetectorActivity extends CameraTFActivity implements OnImageAvailab
                 result.setLocation(location);
                 mappedRecognitions.add(result);
               }
+            }
+            if (titles.contains("teddy bear") && titles.contains("scissors")) {
+                mp = MediaPlayer.create( getApplicationContext(), R.raw.danger);
+                if ( alarmSwitch.isChecked() ) {
+                    if (! mp.isPlaying())
+                        mp.start();
+                } else {
+                    if (mp.isPlaying())
+                        mp.stop();
+                }
+                LOGGER.d("title list : " + alarmSwitch.toString());
             }
             LOGGER.d("title list : " + titles.toString());
 
