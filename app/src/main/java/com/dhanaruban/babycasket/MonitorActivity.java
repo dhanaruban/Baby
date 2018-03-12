@@ -1,7 +1,5 @@
 package com.dhanaruban.babycasket;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,49 +8,49 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ToggleButton;
 
 import com.amazonaws.mobile.auth.ui.SignInUI;
 import com.amazonaws.mobile.client.AWSMobileClient;
-import com.amazonaws.mobile.client.AWSStartupHandler;
-import com.amazonaws.mobile.client.AWSStartupResult;
 import com.amazonaws.mobileconnectors.pinpoint.PinpointConfiguration;
 import com.amazonaws.mobileconnectors.pinpoint.PinpointManager;
 import com.amazonaws.mobileconnectors.pinpoint.analytics.AnalyticsEvent;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
 
-public class MainActivity extends AppCompatActivity {
+import static com.dhanaruban.babycasket.AuthenticatorActivity.pinpointManager;
 
-    public static PinpointManager pinpointManager;
+public class MonitorActivity extends AppCompatActivity {
+
+
 //    private OnFragmentInteractionListener mListener;
-    public static final String LOG_TAG = MainActivity.class.getSimpleName();
+    public static final String LOG_TAG = MonitorActivity.class.getSimpleName();
 //    public static String ALARM_TO_SET = "ALRMTOSEND";
     Button mIsmonitorOn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+//        setContentView(R.layout.activity_main);
         AWSMobileClient.getInstance().initialize(this).execute();
         if (pinpointManager == null) {
-        PinpointConfiguration pinpointConfig = new PinpointConfiguration(
-                getApplicationContext(),
-                AWSMobileClient.getInstance().getCredentialsProvider(),
-                AWSMobileClient.getInstance().getConfiguration());
+            PinpointConfiguration pinpointConfig = new PinpointConfiguration(
+                    getApplicationContext(),
+                    AWSMobileClient.getInstance().getCredentialsProvider(),
+                    AWSMobileClient.getInstance().getConfiguration());
 
-        pinpointManager = new PinpointManager(pinpointConfig);
+            pinpointManager = new PinpointManager(pinpointConfig);
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
                         String deviceToken =
-                                InstanceID.getInstance(MainActivity.this).getToken(
+                                InstanceID.getInstance(MonitorActivity.this).getToken(
                                         "837289399750",
                                         GoogleCloudMessaging.INSTANCE_ID_SCOPE);
                         Log.e("NotError", deviceToken);
@@ -71,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
         // Stop the session and submit the default app started event
         pinpointManager.getSessionClient().stopSession();
         pinpointManager.getAnalyticsClient().submitEvents();
+        logEvent();
 
         setContentView(R.layout.activity_main);
 
@@ -79,16 +78,60 @@ public class MainActivity extends AppCompatActivity {
         mIsmonitorOn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent addPhoto = new Intent(getApplicationContext(),DetectorActivity.class);
+                Intent addPhoto = new Intent(getApplicationContext(), DetectorActivity.class);
                 startActivity(addPhoto);
             }
-        } );
-
-
-
-        logEvent();
-
+        });
     }
+        public void logEvent() {
+            pinpointManager.getSessionClient().startSession();
+            final AnalyticsEvent event =
+                    pinpointManager.getAnalyticsClient().createEvent("AppStart")
+                            .withAttribute("DemoAttribute1", "DemoAttributeValue1")
+                            .withMetric("DemoMetric1", Math.random());
+
+            pinpointManager.getAnalyticsClient().recordEvent(event);
+            pinpointManager.getSessionClient().stopSession();
+            pinpointManager.getAnalyticsClient().submitEvents();
+        }
+        @Override
+        protected void onPause() {
+            super.onPause();
+
+            // unregister notification receiver
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(notificationReceiver);
+        }
+
+        @Override
+        protected void onResume() {
+            super.onResume();
+
+            // register notification receiver
+            LocalBroadcastManager.getInstance(this).registerReceiver(notificationReceiver,
+                    new IntentFilter(PushMessage.ACTION_PUSH_NOTIFICATION));
+        }
+
+        private final BroadcastReceiver notificationReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.d(LOG_TAG, "Received notification from local broadcast. Display it in a dialog.");
+
+                Bundle data = intent.getBundleExtra(PushMessage.INTENT_SNS_NOTIFICATION_DATA);
+                String message = PushMessage.getMessage(data);
+
+                new AlertDialog.Builder(MonitorActivity.this)
+                        .setTitle("Push notification")
+                        .setMessage(message)
+                        .setPositiveButton(android.R.string.ok, null)
+                        .show();
+            }
+        };
+
+
+
+
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -146,14 +189,8 @@ public class MainActivity extends AppCompatActivity {
             return true;
         } else if (id == R.id.action_logout) {
             //this.finish();
-            SignInUI signin = (SignInUI) AWSMobileClient.getInstance()
-                    .getClient(this, SignInUI.class);
-            signin.login(this, AuthenticatorActivity.class).execute();
-
-//           Intent loginscreen = new Intent(this, AuthenticatorActivity.class);
-//            loginscreen.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//            startActivity(loginscreen);
-            finish();
+            Intent intent = new Intent(getApplicationContext(), AuthenticatorActivity.class);
+            startActivity(intent);
         } else if (id == R.id.action_harmful) {
             Intent intent = new Intent(getApplicationContext(), Harmful.class);
             startActivity(intent);
@@ -172,49 +209,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void logEvent() {
-        pinpointManager.getSessionClient().startSession();
-        final AnalyticsEvent event =
-                pinpointManager.getAnalyticsClient().createEvent("AppStart")
-                        .withAttribute("DemoAttribute1", "DemoAttributeValue1")
-                        .withMetric("DemoMetric1", Math.random());
 
-        pinpointManager.getAnalyticsClient().recordEvent(event);
-        pinpointManager.getSessionClient().stopSession();
-        pinpointManager.getAnalyticsClient().submitEvents();
-    }
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        // unregister notification receiver
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(notificationReceiver);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        // register notification receiver
-        LocalBroadcastManager.getInstance(this).registerReceiver(notificationReceiver,
-                new IntentFilter(PushMessage.ACTION_PUSH_NOTIFICATION));
-    }
-
-    private final BroadcastReceiver notificationReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.d(LOG_TAG, "Received notification from local broadcast. Display it in a dialog.");
-
-            Bundle data = intent.getBundleExtra(PushMessage.INTENT_SNS_NOTIFICATION_DATA);
-            String message = PushMessage.getMessage(data);
-
-            new AlertDialog.Builder(MainActivity.this)
-                    .setTitle("Push notification")
-                    .setMessage(message)
-                    .setPositiveButton(android.R.string.ok, null)
-                    .show();
-        }
-    };
 
 
 }

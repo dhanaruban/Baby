@@ -48,7 +48,7 @@ public class PushMessage extends GcmListenerService {
         Log.d(LOGTAG, "Data:" + data.toString());
 
         final NotificationClient notificationClient =
-                MainActivity.pinpointManager.getNotificationClient();
+                AuthenticatorActivity.pinpointManager.getNotificationClient();
 
         NotificationClient.CampaignPushResult pushResult =
                 notificationClient.handleGCMCampaignPush(from, data, this.getClass());

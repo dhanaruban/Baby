@@ -17,20 +17,13 @@ import android.util.Log;
 import android.view.View;
 
 import com.amazonaws.mobile.client.AWSMobileClient;
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
-import com.amazonaws.services.s3.AmazonS3Client;
 import com.dhanaruban.babycasket.data.TaskContract;
-
-import java.io.File;
 
 
 public class CustomActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
     private static int RESULT_ADD_IMAGE = 2;
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String TAG = MonitorActivity.class.getSimpleName();
     private static final int TASK_LOADER_ID = 0;
 
     // Member variables for the adapter and RecyclerView

@@ -21,7 +21,7 @@ import com.dhanaruban.babycasket.data.BabyContract;
 public class BabyActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
     private static int RESULT_ADD_IMAGE = 2;
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String TAG = MonitorActivity.class.getSimpleName();
     private static final int TASK_LOADER_ID = 0;
 
     // Member variables for the adapter and RecyclerView

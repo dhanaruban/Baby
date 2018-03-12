@@ -35,12 +35,12 @@
         </activity>
 
         <activity
-            android:name=".MainActivity"
+            android:name=".MonitorActivity"
             android:label="@string/title_activity_main">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
         </activity>
 
         <activity
@@ -48,21 +48,21 @@
             android:label="@string/title_activity_custom">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".MonitorActivity" />
         </activity>
         <activity
             android:name=".Harmful"
             android:label="@string/title_activity_harmful">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".MonitorActivity" />
         </activity>
         <activity
             android:name=".BabyActivity"
             android:label="@string/title_activity_baby">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".MonitorActivity" />
         </activity>
 
         <activity android:name=".AddPhotosActivity"
@@ -88,19 +88,19 @@
             android:label="@string/title_activity_about">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".MonitorActivity" />
         </activity>
         <activity android:name=".CameraActivity"
             android:label="@string/app_name">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".MonitorActivity" />
         </activity>
         <activity android:name=".Settings"
             android:label="@string/app_name">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".MonitorActivity" />
         </activity>
         <activity
             android:name=".MyCamera"
@@ -112,7 +112,7 @@
             android:label="@string/activity_name_detection">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".MonitorActivity" />
         </activity>
 
         <service android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService" android:enabled="true" />

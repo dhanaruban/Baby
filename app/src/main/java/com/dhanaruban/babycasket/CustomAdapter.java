@@ -54,6 +54,7 @@ public class CustomAdapter  extends RecyclerView.Adapter<CustomAdapter.TaskViewH
     private ContentResolver mContentresolver;
     private DynamoDBMapper dynamoDBMapper;
     private Uri localPath;
+    private Bitmap bitmap;
 
     public CustomAdapter(Context mContext,ContentResolver mContentresolver) {
         this.mContext = mContext;
@@ -116,16 +117,19 @@ public class CustomAdapter  extends RecyclerView.Adapter<CustomAdapter.TaskViewH
         String description = mCursor.getString(descriptionIndex);
         String url =  mCursor.getString(image);//"content://media" + mCursor.getString(image);
         String isUploaded = mCursor.getString(upload);
-        String localPath = "content://media" + mCursor.getString(localFile);
+//        String localPath = "content://media" + mCursor.getString(image);
         Log.i(TAG,url);
-        Log.i(TAG,localPath);
+//        Log.i(TAG,localPath);
 
 
         //Set values
         holder.itemView.setTag(id);
         holder.relationshipView.setText(description);
-        Uri localUri = Uri.parse(localPath);
-        Picasso.with(mContext).load(url).fit().into(holder.imageView);
+
+//        Uri localUri = Uri.parse(localPath);
+
+        Picasso.with(mContext).load(url).transform(new CircleTransform())
+                .into(holder.imageView);
         if(getItemCount()!=0 && isUploaded.equals("false")) {
             uploadData(id,url);
 //            uploadNoSQLData(id, description,url,"true");
