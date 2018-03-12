@@ -196,6 +196,7 @@ public class TensorFlowObjectDetectionAPIModel implements Classifier {
       LOGGER.v("selected Lables : %s" + labels.get((int) outputClasses[i]));
       pq.add(
           new Recognition("" + i, labels.get((int) outputClasses[i]), outputScores[i], detection));
+      LOGGER.v("Selected Recognition : " + pq.toString());
     }
 
     final ArrayList<Recognition> recognitions = new ArrayList<Recognition>();
