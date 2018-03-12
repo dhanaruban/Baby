@@ -27,15 +27,15 @@ import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.media.ImageReader.OnImageAvailableListener;
 import android.os.SystemClock;
-import android.util.Log;
 import android.util.Size;
 import android.util.TypedValue;
 import android.widget.Toast;
 
-import com.dhanaruban.babycasket.OverlayView.DrawCallback;
 import org.tensorflow.demo.Classifier;
+import com.dhanaruban.babycasket.OverlayView.DrawCallback;
 import org.tensorflow.demo.env.BorderedText;
 import org.tensorflow.demo.env.ImageUtils;
+import org.tensorflow.demo.env.Logger;
 import org.tensorflow.demo.tracking.MultiBoxTracker;
 
 import java.io.IOException;
@@ -44,12 +44,11 @@ import java.util.List;
 import java.util.Vector;
 
 /**
- * An activity that uses a  ObjectTracker to detect and then track
+ * An activity that uses a TensorFlowMultiBoxDetector and ObjectTracker to detect and then track
  * objects.
  */
 public class DetectorActivity extends CameraTFActivity implements OnImageAvailableListener {
-
-  private static final String TAG = DetectorActivity.class.getName();
+  private static final Logger LOGGER = new Logger();
 
   // Configuration values for the prepackaged multibox model.
   private static final int MB_INPUT_SIZE = 224;
@@ -67,14 +66,12 @@ public class DetectorActivity extends CameraTFActivity implements OnImageAvailab
       "file:///android_asset/ssd_mobilenet_v1_android_export.pb";
   private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/coco_labels_list.txt";
 
-
-
-    // Configuration values for tiny-yolo-voc. Note that the graph is not included with TensorFlow and
+  // Configuration values for tiny-yolo-voc. Note that the graph is not included with TensorFlow and
   // must be manually placed in the assets/ directory by the user.
   // Graphs and models downloaded from http://pjreddie.com/darknet/yolo/ may be converted e.g. via
   // DarkFlow (https://github.com/thtrieu/darkflow). Sample command:
   // ./flow --model cfg/tiny-yolo-voc.cfg --load bin/tiny-yolo-voc.weights --savepb --verbalise
-  private static final String YOLO_MODEL_FILE = "file:///android_asset/graph-tiny-yolo-voc.pb";
+  private static final String YOLO_MODEL_FILE = "file:///android_asset/tiny-yolo-voc.pb";
   private static final int YOLO_INPUT_SIZE = 416;
   private static final String YOLO_INPUT_NAME = "input";
   private static final String YOLO_OUTPUT_NAMES = "output";
@@ -132,28 +129,50 @@ public class DetectorActivity extends CameraTFActivity implements OnImageAvailab
     tracker = new MultiBoxTracker(this);
 
     int cropSize = TF_OD_API_INPUT_SIZE;
-
+    if (MODE == DetectorMode.YOLO) {
+      detector =
+          TensorFlowYoloDetector.create(
+              getAssets(),
+              YOLO_MODEL_FILE,
+              YOLO_INPUT_SIZE,
+              YOLO_INPUT_NAME,
+              YOLO_OUTPUT_NAMES,
+              YOLO_BLOCK_SIZE);
+      cropSize = YOLO_INPUT_SIZE;
+    } else if (MODE == DetectorMode.MULTIBOX) {
+      detector =
+          TensorFlowMultiBoxDetector.create(
+              getAssets(),
+              MB_MODEL_FILE,
+              MB_LOCATION_FILE,
+              MB_IMAGE_MEAN,
+              MB_IMAGE_STD,
+              MB_INPUT_NAME,
+              MB_OUTPUT_LOCATIONS_NAME,
+              MB_OUTPUT_SCORES_NAME);
+      cropSize = MB_INPUT_SIZE;
+    } else {
       try {
         detector = TensorFlowObjectDetectionAPIModel.create(
             getAssets(), TF_OD_API_MODEL_FILE, TF_OD_API_LABELS_FILE, TF_OD_API_INPUT_SIZE);
         cropSize = TF_OD_API_INPUT_SIZE;
       } catch (final IOException e) {
-        Log.e(TAG, "Exception initializing classifier!", e);
+        LOGGER.e("Exception initializing classifier!", e);
         Toast toast =
             Toast.makeText(
                 getApplicationContext(), "Classifier could not be initialized", Toast.LENGTH_SHORT);
         toast.show();
         finish();
       }
-
+    }
 
     previewWidth = size.getWidth();
     previewHeight = size.getHeight();
 
     sensorOrientation = rotation - getScreenOrientation();
-    Log.i(TAG,"Camera orientation relative to screen canvas: " + sensorOrientation);
+    LOGGER.i("Camera orientation relative to screen canvas: %d", sensorOrientation);
 
-    Log.i(TAG, "Initializing at size " + previewWidth + "x" + previewHeight);
+    LOGGER.i("Initializing at size %dx%d", previewWidth, previewHeight);
     rgbFrameBitmap = Bitmap.createBitmap(previewWidth, previewHeight, Config.ARGB_8888);
     croppedBitmap = Bitmap.createBitmap(cropSize, cropSize, Config.ARGB_8888);
 
@@ -244,7 +263,7 @@ public class DetectorActivity extends CameraTFActivity implements OnImageAvailab
       return;
     }
     computingDetection = true;
-    Log.i(TAG,"Preparing image " + currTimestamp + " for detection in bg thread.");
+    LOGGER.i("Preparing image " + currTimestamp + " for detection in bg thread.");
 
     rgbFrameBitmap.setPixels(getRgbBytes(), 0, previewWidth, 0, 0, previewWidth, previewHeight);
 
@@ -265,7 +284,7 @@ public class DetectorActivity extends CameraTFActivity implements OnImageAvailab
         new Runnable() {
           @Override
           public void run() {
-            Log.i(TAG,"Running detection on image " + currTimestamp);
+            LOGGER.i("Running detection on image " + currTimestamp);
             final long startTime = SystemClock.uptimeMillis();
             final List<Classifier.Recognition> results = detector.recognizeImage(croppedBitmap);
             lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime;
@@ -292,9 +311,13 @@ public class DetectorActivity extends CameraTFActivity implements OnImageAvailab
 
             final List<Classifier.Recognition> mappedRecognitions =
                 new LinkedList<Classifier.Recognition>();
-
+            List<String> titles = new LinkedList<String>();
             for (final Classifier.Recognition result : results) {
               final RectF location = result.getLocation();
+              LOGGER.d("title : " + result.getTitle() +" : " + result.toString());
+
+                titles.add(result.getTitle());
+
               if (location != null && result.getConfidence() >= minimumConfidence) {
                 canvas.drawRect(location, paint);
 
@@ -303,6 +326,7 @@ public class DetectorActivity extends CameraTFActivity implements OnImageAvailab
                 mappedRecognitions.add(result);
               }
             }
+            LOGGER.d("title list : " + titles.toString());
 
             tracker.trackResults(mappedRecognitions, luminanceCopy, currTimestamp);
             trackingOverlay.postInvalidate();
